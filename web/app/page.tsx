@@ -1,11 +1,23 @@
-// web/app/page.tsx
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { Hero } from "@/components/marketing/hero";
 import { createBooking } from "./actions/booking";
 
+// Ta linia wymusza, aby Vercel nie cache'ował strony jako statycznej
+// Dzięki temu pokoje będą pobierane z bazy przy każdym odświeżeniu
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
-  const { data: rooms } = await supabase.from("rooms").select("*").eq("is_available", true);
+  
+  // Pobieranie pokoi bezpośrednio z bazy
+  const { data: rooms, error } = await supabase
+    .from("rooms")
+    .select("*")
+    .eq("is_available", true);
+
+  if (error) {
+    console.error("Supabase error:", error.message);
+  }
 
   const experienceGrid = [
     { title: "Kipfenberg Castle", img: "/kipfenberg-castle.jpeg", desc: "Historic views overlooking the Altmühltal." },
@@ -20,7 +32,7 @@ export default async function HomePage() {
     <div className="flex flex-col gap-24 pb-24">
       <Hero />
 
-      {/* 6-Photo Experience Grid */}
+      {/* Experience Grid */}
       <section id="experience" className="mx-auto max-w-6xl px-4 w-full">
         <div className="mb-12 text-center">
           <h2 className="font-serif text-4xl font-bold text-white">The DENKRAUM Experience</h2>
@@ -52,37 +64,43 @@ export default async function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {rooms?.map((room) => (
-            <div key={room.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50">
-              <div className="relative aspect-[16/10]">
-                <img 
-                  src="/room-standard.jpeg" 
-                  alt={room.type} 
-                  className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" 
-                />
-                <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
-                  <p className="font-bold text-[#0ea5e9]">
-                    ${(room.price_cents / 100).toFixed(2)} / night
+          {rooms && rooms.length > 0 ? (
+            rooms.map((room) => (
+              <div key={room.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50">
+                <div className="relative aspect-[16/10]">
+                  <img 
+                    src="/room-standard.jpeg" 
+                    alt={room.type} 
+                    className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" 
+                  />
+                  <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
+                    <p className="font-bold text-[#0ea5e9]">
+                      ${(room.price_cents / 100).toFixed(2)} / night
+                    </p>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-white">{room.type}</h3>
+                  <p className="mb-8 mt-2 text-sm text-white/50 leading-relaxed">
+                    High-speed workstation and premium amenities in a quiet, rural setting.
                   </p>
+                  <form action={createBooking}>
+                    <input type="hidden" name="roomId" value={room.id} />
+                    <button 
+                      type="submit" 
+                      className="w-full rounded-xl bg-[#3d2b1f] py-4 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-opacity-80"
+                    >
+                      Confirm Reservation
+                    </button>
+                  </form>
                 </div>
               </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-white">{room.type}</h3>
-                <p className="mb-8 mt-2 text-sm text-white/50 leading-relaxed">
-                  High-speed workstation and premium amenities in a quiet, rural setting.
-                </p>
-                <form action={createBooking}>
-                  <input type="hidden" name="roomId" value={room.id} />
-                  <button 
-                    type="submit" 
-                    className="w-full rounded-xl bg-[#3d2b1f] py-4 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-opacity-80"
-                  >
-                    Confirm Reservation
-                  </button>
-                </form>
-              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 border border-dashed border-white/10 rounded-2xl">
+              <p className="text-white/50 italic">No rooms found. Check Supabase connection.</p>
             </div>
-          ))}
+          )}
         </div>
       </section>
     </div>
