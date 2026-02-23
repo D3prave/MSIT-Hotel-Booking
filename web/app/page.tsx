@@ -2,13 +2,11 @@ import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { Hero } from "@/components/marketing/hero";
 import { createBooking } from "./actions/booking";
 
-// Wymuszenie odświeżania danych przy każdym wejściu
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
   
-  // Pobieranie danych z Supabase
   const { data: rooms, error } = await supabase
     .from("rooms")
     .select("*")
@@ -17,10 +15,10 @@ export default async function HomePage() {
   const experienceGrid = [
     { title: "Kipfenberg Castle", img: "/kipfenberg-castle.jpeg", desc: "Historic views overlooking the Altmühltal." },
     { title: "Altmühltal Drive", img: "/altmuhltal-drive.jpeg", desc: "Panoramic routes for classic car enthusiasts." },
-    { title: "Executive Focus", img: "/conference.jpeg", desc: "Professional infrastructure for focus." },
+    { title: "Executive Focus", img: "/conference.jpeg", desc: "Fully equipped conference and work areas." },
     { title: "Deep Recovery", img: "/spa.jpeg", desc: "Finnish sauna and whirlpool relaxation." },
-    { title: "Bavarian Breakfast", img: "/breakfast.jpeg", desc: "Regional flavors to power your day." },
-    { title: "Leisure & Spirits", img: "/chill.jpeg", desc: "Billiards and local drinks in our chill area." },
+    { title: "Bavarian Breakfast", img: "/breakfast.jpeg", desc: "Regional flavors to power your workday." },
+    { title: "Leisure & Spirits", img: "/chill.jpeg", desc: "Chill area with billiards and regional drinks." },
   ];
 
   return (
@@ -54,11 +52,7 @@ export default async function HomePage() {
           <p className="mt-2 text-white/60 text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
         </div>
 
-        {error && (
-          <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-500 text-sm mb-8">
-            Database Error: {error.message}. Make sure Environment Variables are set in Vercel.
-          </div>
-        )}
+        {error && <div className="text-red-500 mb-4">Error: {error.message}</div>}
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {rooms && rooms.length > 0 ? (
@@ -72,8 +66,8 @@ export default async function HomePage() {
                 </div>
                 <div className="p-8 text-left">
                   <h3 className="text-2xl font-bold text-white">{room.type}</h3>
-                  <p className="mb-8 mt-2 text-sm text-white/50 leading-relaxed">
-                    High-speed workstation and premium amenities in a quiet, rural setting.
+                  <p className="mb-8 mt-2 text-sm text-white/50 leading-relaxed min-h-[3rem]">
+                    {room.description || "Premium workspace and farmhouse charm."}
                   </p>
                   <form action={createBooking}>
                     <input type="hidden" name="roomId" value={room.id} />
@@ -85,8 +79,8 @@ export default async function HomePage() {
               </div>
             ))
           ) : (
-            <div className="col-span-full text-center py-24 border border-dashed border-white/10 rounded-2xl">
-              <p className="text-white/50 italic text-lg">No active rooms found.</p>
+            <div className="col-span-full text-center py-24 border border-dashed border-white/10 rounded-2xl text-white/50 italic">
+              No rooms found. Check Supabase connection and SQL data.
             </div>
           )}
         </div>
