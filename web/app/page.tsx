@@ -8,12 +8,12 @@ export default async function HomePage() {
   const { data: rooms } = await supabase.from("rooms").select("*").eq("is_available", true);
 
   const experienceGrid = [
-    { title: "Kipfenberg Castle", img: "/kipfenberg-castle.jpeg", desc: "Historic views overlooking our farmhouse." },
-    { title: "Altmühltal Drive", img: "/altmuhltal-drive.jpeg", desc: "The 'Drive Freely' experience for enthusiasts." },
-    { title: "Conference Strategy", img: "/conference.jpeg", desc: "Professional infrastructure for executive focus." },
-    { title: "Deep Recovery Spa", img: "/spa.jpeg", desc: "Finnish sauna and whirlpool relaxation." },
-    { title: "Bavarian Breakfast", img: "/breakfast.jpeg", desc: "Regional flavors to power your professional day." },
-    { title: "The Chill Area", img: "/chill.jpeg", desc: "Leisure room with billiard tables and regional spirits." },
+    { title: "Kipfenberg Castle", img: "/kipfenberg-castle.jpeg", desc: "Historic views overlooking the Altmühltal." },
+    { title: "Altmühltal Drive", img: "/altmuhltal-drive.jpeg", desc: "Panoramic routes for classic car enthusiasts." },
+    { title: "Executive Focus", img: "/conference.jpeg", desc: "Fully equipped conference and work areas." },
+    { title: "Deep Recovery", img: "/spa.jpeg", desc: "Finnish sauna and whirlpool relaxation." },
+    { title: "Bavarian Breakfast", img: "/breakfast.jpeg", desc: "Regional flavors to power your workday." },
+    { title: "Leisure & Spirits", img: "/chill.jpeg", desc: "Chill area with billiards and regional drinks." },
   ];
 
   return (
@@ -48,7 +48,7 @@ export default async function HomePage() {
       <section id="rooms" className="mx-auto max-w-6xl px-4 w-full">
         <div className="mb-12 border-l-4 border-[#3d2b1f] pl-6">
           <h2 className="font-serif text-4xl font-bold text-white tracking-tight">Executive Retreats</h2>
-          <p className="mt-2 text-white/60">Adaptive reuse of a historic 1886 farmhouse in Kipfenberg.</p>
+          <p className="mt-2 text-white/60 text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -69,7 +69,7 @@ export default async function HomePage() {
               <div className="p-8">
                 <h3 className="text-2xl font-bold text-white">{room.type}</h3>
                 <p className="mb-8 mt-2 text-sm text-white/50 leading-relaxed">
-                  High-speed workstation and premium amenities included in every stay.
+                  High-speed workstation and premium amenities in a quiet, rural setting.
                 </p>
                 <form action={createBooking}>
                   <input type="hidden" name="roomId" value={room.id} />

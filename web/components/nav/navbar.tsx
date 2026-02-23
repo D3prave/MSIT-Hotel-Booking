@@ -7,10 +7,10 @@ import { AuthButton } from "@/components/auth/auth-button";
 
 export function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-navy/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0b1220]/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="flex items-center gap-3">
-          <img src={siteConfig.logoUrl} alt="Logo" className="h-10 w-auto" />
+          <img src={siteConfig.logoUrl} alt="DENKRAUM Logo" className="h-10 w-auto" />
           <span className="font-serif text-xl font-bold tracking-tighter text-white">
             {siteConfig.name}
           </span>

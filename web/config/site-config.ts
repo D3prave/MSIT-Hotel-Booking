@@ -19,6 +19,6 @@ export const siteConfig = {
   hero: {
     headline: "Work clearly. Rest deeply. Drive freely.",
     subheadline: "Your professional agenda transforms into meaningful personal time in our historic farmhouse.",
-    imageUrl: "/hero.jpeg", 
+    imageUrl: "/lobby.jpeg", // Now using your lobby photo here
   },
 };
