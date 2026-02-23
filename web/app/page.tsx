@@ -2,7 +2,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { Hero } from "@/components/marketing/hero";
 import { createBooking } from "./actions/booking";
-import { siteConfig } from "@/config/site-config";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();

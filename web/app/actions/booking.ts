@@ -27,8 +27,8 @@ export async function createBooking(formData: FormData): Promise<void> {
 
   if (error) {
     console.error("Booking failed:", error.message);
-    // Zamiast zwracać obiekt, rzucamy błąd lub przekierowujemy z parametrem
-    redirect("/?error=booking-failed");
+    // Przekierowanie z błędem w URL, aby uniknąć błędów typowania
+    redirect("/?error=booking_failed");
   }
 
   revalidatePath("/bookings");
