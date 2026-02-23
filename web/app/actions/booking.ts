@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function createBooking(formData: FormData) {
+export async function createBooking(formData: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -14,7 +14,6 @@ export async function createBooking(formData: FormData) {
   }
 
   const roomId = formData.get("roomId") as string;
-  // Defaulting to a 1-night stay for the prototype
   const startDate = new Date().toISOString().split("T")[0];
   const endDate = new Date(Date.now() + 86400000).toISOString().split("T")[0];
 
@@ -28,7 +27,8 @@ export async function createBooking(formData: FormData) {
 
   if (error) {
     console.error("Booking failed:", error.message);
-    return { error: error.message };
+    // Zamiast zwracać obiekt, rzucamy błąd lub przekierowujemy z parametrem
+    redirect("/?error=booking-failed");
   }
 
   revalidatePath("/bookings");
