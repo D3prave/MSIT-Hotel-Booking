@@ -7,18 +7,23 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
   
+  // Próba pobrania danych
   const { data: rooms, error } = await supabase
     .from("rooms")
     .select("*")
     .eq("is_available", true);
 
+  if (error) {
+    console.error("Supabase error:", error.message);
+  }
+
   const experienceGrid = [
     { title: "Kipfenberg Castle", img: "/kipfenberg-castle.jpeg", desc: "Historic views overlooking the Altmühltal." },
     { title: "Altmühltal Drive", img: "/altmuhltal-drive.jpeg", desc: "Panoramic routes for classic car enthusiasts." },
-    { title: "Executive Focus", img: "/conference.jpeg", desc: "Fully equipped conference and work areas." },
-    { title: "Deep Recovery", img: "/spa.jpeg", desc: "Finnish sauna and whirlpool relaxation." },
+    { title: "Executive Focus", img: "/conference.jpeg", desc: "High-speed privacy for corporate strategy." },
+    { title: "Deep Recovery", img: "/spa.jpeg", desc: "Finnish sauna for restorative wellness." },
     { title: "Bavarian Breakfast", img: "/breakfast.jpeg", desc: "Regional flavors to power your workday." },
-    { title: "Leisure & Spirits", img: "/chill.jpeg", desc: "Chill area with billiards and regional drinks." },
+    { title: "Leisure & Spirits", img: "/chill.jpeg", desc: "Billiards and local drinks in our chill area." },
   ];
 
   return (
@@ -52,8 +57,6 @@ export default async function HomePage() {
           <p className="mt-2 text-white/60 text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
         </div>
 
-        {error && <div className="text-red-500 mb-4">Error: {error.message}</div>}
-
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {rooms && rooms.length > 0 ? (
             rooms.map((room) => (
@@ -61,7 +64,7 @@ export default async function HomePage() {
                 <div className="relative aspect-[16/10]">
                   <img src="/room-standard.jpeg" alt={room.type} className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
                   <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
-                    <p className="font-bold text-[#0ea5e9]">${(room.price_cents / 100).toFixed(2)} / night</p>
+                    <p className="font-bold text-[#0ea5e9]">${(room.price_cents / 100).toFixed(2)}</p>
                   </div>
                 </div>
                 <div className="p-8 text-left">
@@ -80,7 +83,7 @@ export default async function HomePage() {
             ))
           ) : (
             <div className="col-span-full text-center py-24 border border-dashed border-white/10 rounded-2xl text-white/50 italic">
-              No rooms found. Check Supabase connection and SQL data.
+              {error ? `Database Error: ${error.message}` : "No active rooms found in the estate database."}
             </div>
           )}
         </div>
