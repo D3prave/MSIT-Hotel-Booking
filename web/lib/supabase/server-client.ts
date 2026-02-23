@@ -1,3 +1,4 @@
+// web/lib/supabase/server-client.ts
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
@@ -18,7 +19,7 @@ export async function createSupabaseServerClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // Ignored if called from Server Component
+            // Safe to ignore in Server Components
           }
         },
       },
