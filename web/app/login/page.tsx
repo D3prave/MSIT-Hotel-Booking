@@ -1,9 +1,11 @@
-// web/app/login/page.tsx
 "use client";
 
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
+
+// Kluczowe dla Next.js 16: zapobiega błędom prerenderingu na Vercel
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,8 +27,12 @@ export default function LoginPage() {
       alert(error.message);
       setLoading(false);
     } else {
-      router.refresh(); // Kluczowe dla sesji w Next.js 16
-      setTimeout(() => router.push("/"), 400);
+      // Refresh zapewnia synchronizację sesji
+      router.refresh();
+      // Używamy window.location dla absolutnej pewności po stronie klienta
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 400);
     }
   };
 
@@ -41,13 +47,13 @@ export default function LoginPage() {
           <input 
             type="email" 
             placeholder="EMAIL" 
-            className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#3d2b1f] outline-none transition-all duration-300"
+            className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#a87f5d] outline-none transition-all duration-300"
             onChange={e => setEmail(e.target.value)}
           />
           <input 
             type="password" 
             placeholder="PASSWORD" 
-            className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#3d2b1f] outline-none transition-all duration-300"
+            className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#a87f5d] outline-none transition-all duration-300"
             onChange={e => setPassword(e.target.value)}
           />
           <button 
@@ -61,7 +67,7 @@ export default function LoginPage() {
 
         <button 
           onClick={() => setIsRegistering(!isRegistering)}
-          className="w-full mt-10 text-[9px] font-bold text-white/20 uppercase tracking-[0.4em] hover:text-[#0ea5e9] transition-colors"
+          className="w-full mt-10 text-[9px] font-bold text-white/20 uppercase tracking-[0.4em] hover:text-[#a87f5d] transition-colors"
         >
           {isRegistering ? "BACK TO SIGN IN" : "NO ACCOUNT? REGISTER"}
         </button>
