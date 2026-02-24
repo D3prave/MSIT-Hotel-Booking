@@ -7,20 +7,20 @@ export default async function Navbar() {
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <nav className="fixed top-0 z-50 flex w-full justify-center px-3 py-3 sm:px-4 md:px-6 md:py-6">
-      <div className="flex w-full max-w-6xl items-center justify-between rounded-2xl border border-white/10 bg-[#0b1220]/60 px-4 py-2.5 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] sm:px-5 md:rounded-full md:px-8 md:py-3">
+    <nav className="fixed top-0 z-50 flex w-full justify-center px-3 py-3 sm:px-4 md:px-6 md:py-7">
+      <div className="flex w-full max-w-6xl items-center justify-between rounded-2xl border border-white/10 bg-[#0b1220]/60 px-5 py-3 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] sm:px-6 md:rounded-full md:px-9 md:py-4">
         <Link href="/#top" className="group flex items-center gap-2 sm:gap-2.5">
           <img
             src="/logo.png"
             alt="DENKRAUM"
-            className="h-7 w-auto rounded-sm bg-[#f6efe2] p-1 shadow-[0_2px_10px_rgba(0,0,0,0.25)] transition-transform duration-700 group-hover:scale-110 sm:h-8 md:h-7"
+            className="h-8 w-auto rounded-sm bg-[#f6efe2] p-1 shadow-[0_2px_10px_rgba(0,0,0,0.25)] transition-transform duration-700 group-hover:scale-110 sm:h-8 md:h-8"
           />
-          <span className="font-serif text-sm font-black italic leading-none tracking-tight text-white uppercase sm:text-base md:text-[19px]">
+          <span className="font-serif text-base font-black italic leading-none tracking-tight text-white uppercase sm:text-lg md:text-[20px]">
             DENKRAUM 1886
           </span>
         </Link>
 
-        <div className="hidden items-center gap-6 text-[9px] font-black uppercase tracking-[0.2em] text-white/40 md:flex">
+        <div className="hidden items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 md:flex">
           <Link href="/#about" className="hover:text-white transition-colors">About Us</Link>
           <Link href="/#experience" className="hover:text-white transition-colors">Experience</Link>
           <Link href="/#rooms" className="hover:text-white transition-colors">Rooms</Link>
@@ -32,14 +32,14 @@ export default async function Navbar() {
               <SignOutButton />
             </>
           ) : (
-            <Link href="/login" className="rounded-full bg-white px-5 py-2 text-[9px] text-black font-black shadow-lg">
+            <Link href="/login" className="rounded-full bg-white px-6 py-2.5 text-[10px] text-black font-black shadow-lg">
               Login
             </Link>
           )}
         </div>
 
         <details className="relative md:hidden">
-          <summary className="list-none rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/70 transition-colors hover:text-white [&::-webkit-details-marker]:hidden">
+          <summary className="list-none rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-[11px] font-black uppercase tracking-[0.2em] text-white/70 transition-colors hover:text-white [&::-webkit-details-marker]:hidden">
             Menu
           </summary>
           <div className="absolute right-0 mt-3 w-56 rounded-2xl border border-white/15 bg-[#0b1220]/95 p-3 shadow-[0_18px_45px_rgba(0,0,0,0.5)] backdrop-blur-xl">

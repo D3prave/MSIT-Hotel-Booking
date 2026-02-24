@@ -98,42 +98,42 @@ export default function HomePage() {
             <p className="mt-2 text-base text-white/60 md:text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
           </div>
           
-          <div className="flex w-full max-w-xl flex-col gap-3 rounded-xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:flex-wrap sm:gap-4">
-            <div className="flex min-w-[10.5rem] flex-col gap-1">
+          <div className="grid w-full grid-cols-1 gap-3 rounded-xl border border-white/10 bg-white/5 p-4 sm:max-w-md sm:grid-cols-2 sm:gap-4 md:w-auto md:min-w-[26rem]">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-[#0b1220]/35 px-3 py-2">
               <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Check In</label>
               <input 
                 type="date" 
                 min={today}
                 value={startDate}
                 onChange={handleStartChange}
-                className="w-full border-none bg-transparent text-sm text-white focus:ring-0 [color-scheme:dark]"
+                className="w-full border-none bg-transparent p-0 text-sm text-white focus:ring-0 [color-scheme:dark]"
               />
             </div>
-            <div className="flex min-w-[10.5rem] flex-col gap-1">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-[#0b1220]/35 px-3 py-2">
               <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Check Out</label>
               <input 
                 type="date" 
                 min={getNextDay(startDate)}
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full border-none bg-transparent text-sm text-white focus:ring-0 [color-scheme:dark]"
+                className="w-full border-none bg-transparent p-0 text-sm text-white focus:ring-0 [color-scheme:dark]"
               />
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
           {rooms.map((room) => (
             <div key={room.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50">
-              <div className="relative aspect-[16/10]">
+              <div className="relative aspect-[16/9.4]">
                 <img src={getRoomImage(room.type)} alt={room.type} className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
-                <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
+                <div className="absolute bottom-3 left-3 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
                   <p className="font-bold text-[#0ea5e9]">€{(room.price_cents / 100).toFixed(2)} / night</p>
                 </div>
               </div>
-              <div className="p-6 text-left md:p-8">
+              <div className="p-5 text-left md:p-6">
                 <h3 className="text-xl font-bold text-white md:text-2xl">{room.type}</h3>
-                <p className="mb-6 mt-2 min-h-[2.5rem] text-[13px] leading-relaxed text-white/50 md:mb-8 md:min-h-[3rem] md:text-sm">
+                <p className="mb-4 mt-2 min-h-[2.2rem] text-[13px] leading-relaxed text-white/50 md:mb-5 md:min-h-[2.5rem] md:text-sm">
                   {room.description || "Premium workspace and farmhouse charm."}
                 </p>
                 <BookRoomForm roomId={room.id} startDate={startDate} endDate={endDate} />
