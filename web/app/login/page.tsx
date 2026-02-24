@@ -1,70 +1,70 @@
 // web/app/login/page.tsx
 "use client";
 
+import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function LoginPage() {
-  const supabase = createSupabaseBrowserClient();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const supabase = createSupabaseBrowserClient();
+  const router = useRouter();
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) alert(error.message);
-    else {
-      router.refresh();
-      router.push("/");
+    setLoading(true);
+
+    const { error } = isRegistering 
+      ? await supabase.auth.signUp({ email, password })
+      : await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      alert(error.message);
+      setLoading(false);
+    } else {
+      router.refresh(); // Kluczowe dla sesji w Next.js 16
+      setTimeout(() => router.push("/"), 400);
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'github') => {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
-    });
-  };
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0b1220] px-4">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
-        <h1 className="mb-8 text-center font-serif text-3xl font-bold text-white">DENKRAUM 1886</h1>
-        
-        <form onSubmit={handleEmailLogin} className="space-y-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#0b1220]">
+      <div className="w-full max-w-md p-10 bg-white/5 border border-white/10 rounded-[3rem] backdrop-blur-3xl shadow-2xl">
+        <div className="mb-12 text-center">
+          <h1 className="font-serif text-5xl font-black italic tracking-tighter text-white uppercase">DENKRAUM</h1>
+        </div>
+
+        <form onSubmit={handleAuth} className="space-y-4">
           <input 
             type="email" 
-            placeholder="Email" 
-            className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:outline-none"
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="EMAIL" 
+            className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#3d2b1f] outline-none transition-all duration-300"
+            onChange={e => setEmail(e.target.value)}
           />
           <input 
             type="password" 
-            placeholder="Password" 
-            className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white focus:outline-none"
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="PASSWORD" 
+            className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#3d2b1f] outline-none transition-all duration-300"
+            onChange={e => setPassword(e.target.value)}
           />
-          <button className="w-full rounded-xl bg-[#3d2b1f] py-4 font-bold text-white hover:opacity-90">
-            Sign In
+          <button 
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#3d2b1f] py-6 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] text-white hover:brightness-125 active:scale-95 transition-all duration-300 shadow-2xl"
+          >
+            {loading ? "AUTHENTICATING..." : isRegistering ? "CREATE ACCOUNT" : "SIGN IN"}
           </button>
         </form>
 
-        <div className="my-6 flex items-center gap-4">
-          <div className="h-[1px] flex-1 bg-white/10"></div>
-          <span className="text-xs text-white/30">OR</span>
-          <div className="h-[1px] flex-1 bg-white/10"></div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <button onClick={() => handleSocialLogin('google')} className="rounded-xl border border-white/10 py-3 text-white hover:bg-white/5">
-            Google
-          </button>
-          <button onClick={() => handleSocialLogin('github')} className="rounded-xl border border-white/10 py-3 text-white hover:bg-white/5">
-            GitHub
-          </button>
-        </div>
+        <button 
+          onClick={() => setIsRegistering(!isRegistering)}
+          className="w-full mt-10 text-[9px] font-bold text-white/20 uppercase tracking-[0.4em] hover:text-[#0ea5e9] transition-colors"
+        >
+          {isRegistering ? "BACK TO SIGN IN" : "NO ACCOUNT? REGISTER"}
+        </button>
       </div>
     </div>
   );

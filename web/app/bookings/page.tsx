@@ -67,7 +67,7 @@ export default async function BookingsPage() {
         <div className="space-y-6">
           <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
             <img 
-              src="/kipfenberg-castle.jpeg" 
+              src="/castle.jpeg" 
               alt="Kipfenberg Castle" 
               className="w-full h-48 object-cover opacity-80"
             />

@@ -23,8 +23,8 @@ export default async function HomePage() {
   };
 
   const experienceGrid = [
-    { title: "Kipfenberg Castle", img: "/kipfenberg-castle.jpeg", desc: "Historic views overlooking the Altmühltal." },
-    { title: "Altmühltal Drive", img: "/altmuhltal-drive.jpeg", desc: "Panoramic routes for classic car enthusiasts." },
+    { title: "Kipfenberg Castle", img: "/castle.jpeg", desc: "Historic views overlooking the Altmühltal." },
+    { title: "Altmühltal Drive", img: "/altmu.jpeg", desc: "Panoramic routes for classic car enthusiasts." },
     { title: "Executive Focus", img: "/conference.jpeg", desc: "Professional infrastructure for focus." },
     { title: "Deep Recovery", img: "/spa.jpeg", desc: "Finnish sauna and whirlpool relaxation." },
     { title: "Bavarian Breakfast", img: "/breakfast.jpeg", desc: "Regional flavors to power your day." },

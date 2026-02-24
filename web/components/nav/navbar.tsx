@@ -1,33 +1,38 @@
 // web/components/nav/navbar.tsx
-"use client";
-
 import Link from "next/link";
-import { siteConfig } from "@/config/site-config";
-import { AuthButton } from "@/components/auth/auth-button";
+import { createSupabaseServerClient } from "@/lib/supabase/server-client";
+import SignOutButton from "./sign-out-button";
 
-export function Navbar() {
+export default async function Navbar() {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0b1220]/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link href="/" className="flex items-center gap-3">
-          <img src={siteConfig.logoUrl} alt="DENKRAUM Logo" className="h-10 w-auto" />
-          <span className="font-serif text-xl font-bold tracking-tighter text-white">
-            {siteConfig.name}
+    <nav className="fixed top-0 w-full z-50 flex justify-center px-6 py-6">
+      <div className="flex w-full max-w-5xl items-center justify-between rounded-full border border-white/10 bg-[#0b1220]/60 px-8 py-3 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+        
+        <Link href="/" className="flex items-center gap-3 group">
+          <img src="/logo.png" alt="DENKRAUM" className="h-6 w-auto transition-transform duration-700 group-hover:scale-110" />
+          <span className="font-serif text-base font-black italic tracking-tighter text-white uppercase">
+            DENKRAUM 1886
           </span>
         </Link>
-        <div className="flex items-center gap-8">
-          <div className="hidden space-x-6 md:flex">
-            {siteConfig.nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-white/70 transition-colors hover:text-white"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-          <AuthButton />
+        
+        <div className="flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+          <Link href="/#experience" className="hover:text-white transition-colors">Experience</Link>
+          <Link href="/#rooms" className="hover:text-white transition-colors">Rooms</Link>
+          
+          {user ? (
+            <>
+              <Link href="/bookings" className="text-[#0ea5e9] font-black">My Stays</Link>
+              {/* Używamy komponentu klienckiego zamiast formularza POST */}
+              <SignOutButton />
+            </>
+          ) : (
+            <Link href="/login" className="rounded-full bg-white px-5 py-2 text-[9px] text-black font-black shadow-lg">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>
