@@ -14,12 +14,12 @@ export function AboutUs() {
               <p>
                 The year 1886 was a pivot point for humanity. While the original stone 
                 walls of our farmhouse were being raised in the Bavarian countryside, 
-                Carl Benz was patenting the Motorwagen. These two worlds—steadfast 
-                tradition and radical movement—are the DNA of DENKRAUM.
+                Carl Benz was patenting the Motorwagen. These two worlds, steadfast 
+                tradition and radical movement, are the DNA of DENKRAUM.
               </p>
               <p>
                 Originally built as a regional hub for agriculture and community gathering, 
-                the estate has survived over a century of change. In 2024, it was 
+                the estate has survived over a century of change. In 2026, it was 
                 meticulously restored to serve the modern pioneer.
               </p>
               <p className="text-[#a87f5d] font-medium italic">

@@ -10,7 +10,6 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   
-  // Bezpieczne inicjowanie klienta tylko w przeglądarce
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
@@ -26,8 +25,9 @@ export default function LoginForm() {
       alert(error.message);
       setLoading(false);
     } else {
-      window.location.replace("/");
+      // Refresh to update server components and redirect to home
       router.refresh();
+      window.location.href = "/";
     }
   };
 
