@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className="bg-[#0b1220] antialiased">
         <SmoothScrollProvider>
           <Navbar />
-          <main>{children}</main>
+          <main id="top">{children}</main>
           <Footer />
         </SmoothScrollProvider>
       </body>

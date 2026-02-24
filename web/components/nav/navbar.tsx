@@ -10,9 +10,9 @@ export default async function Navbar() {
     <nav className="fixed top-0 w-full z-50 flex justify-center px-6 py-6">
       <div className="flex w-full max-w-6xl items-center justify-between rounded-full border border-white/10 bg-[#0b1220]/60 px-8 py-3 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
         
-        <Link href="/" className="flex items-center gap-3 group">
-          <img src="/logo.png" alt="DENKRAUM" className="h-6 w-auto transition-transform duration-700 group-hover:scale-110" />
-          <span className="font-serif text-base font-black italic tracking-tighter text-white uppercase">
+        <Link href="/#top" className="group flex items-center gap-2.5">
+          <img src="/logo.png" alt="DENKRAUM" className="h-7 w-auto rounded-sm bg-[#f6efe2] p-1 shadow-[0_2px_10px_rgba(0,0,0,0.25)] transition-transform duration-700 group-hover:scale-110" />
+          <span className="font-serif text-[19px] font-black italic tracking-tight text-white uppercase">
             DENKRAUM 1886
           </span>
         </Link>
