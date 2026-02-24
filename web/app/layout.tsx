@@ -1,13 +1,11 @@
-// web/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-// Usuwamy klamry {}, ponieważ Navbar jest eksportem domyślnym
-import Navbar from "@/components/nav/navbar"; 
-import { siteConfig } from "@/config/site-config";
+import Navbar from "@/components/nav/navbar";
+import Footer from "@/components/nav/footer";
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
-  description: siteConfig.description,
+  title: "DENKRAUM 1886",
+  description: "Executive Retreat in Kipfenberg",
 };
 
 export default function RootLayout({
@@ -20,6 +18,7 @@ export default function RootLayout({
       <body className="bg-[#0b1220] antialiased">
         <Navbar />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
