@@ -1,5 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { Hero } from "@/components/marketing/hero";
+import { AboutUs } from "@/components/marketing/about-us";
+import { ContactUs } from "@/components/marketing/contact-us";
 import { createBooking } from "./actions/booking";
 
 export const dynamic = "force-dynamic";
@@ -12,14 +14,13 @@ export default async function HomePage() {
     .select("*")
     .eq("is_available", true);
 
-  // Mapowanie nazw typów z bazy danych na Twoje nowe pliki .jpeg
   const getRoomImage = (type: string) => {
     const lowerType = type.toLowerCase();
     if (lowerType.includes('economy')) return '/economy.jpeg';
     if (lowerType.includes('suite')) return '/suite.jpeg';
     if (lowerType.includes('superior')) return '/superior.jpeg';
     if (lowerType.includes('deluxe')) return '/deluxe.jpeg';
-    return '/room-standard.jpeg'; // Fallback
+    return '/room-standard.jpeg';
   };
 
   const experienceGrid = [
@@ -35,8 +36,11 @@ export default async function HomePage() {
     <div className="flex flex-col gap-24 pb-24">
       <Hero />
 
-      {/* Experience Grid */}
-      <section id="experience" className="mx-auto max-w-6xl px-4 w-full">
+      {/* About Section */}
+      <AboutUs />
+
+      {/* Experience Grid Section */}
+      <section id="experience" className="mx-auto max-w-6xl px-4 w-full pt-12">
         <div className="mb-12 text-center">
           <h2 className="font-serif text-4xl font-bold text-white uppercase tracking-wider">The DENKRAUM Experience</h2>
           <div className="mx-auto mt-4 h-1 w-20 bg-[#3d2b1f]"></div>
@@ -55,8 +59,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Rooms Section z dynamicznymi zdjęciami */}
-      <section id="rooms" className="mx-auto max-w-6xl px-4 w-full">
+      {/* Rooms Section */}
+      <section id="rooms" className="mx-auto max-w-6xl px-4 w-full pt-12">
         <div className="mb-12 border-l-4 border-[#3d2b1f] pl-6 text-left">
           <h2 className="font-serif text-4xl font-bold text-white tracking-tight uppercase">Executive Retreats</h2>
           <p className="mt-2 text-white/60 text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
@@ -69,11 +73,7 @@ export default async function HomePage() {
             rooms.map((room) => (
               <div key={room.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50">
                 <div className="relative aspect-[16/10]">
-                  <img 
-                    src={getRoomImage(room.type)} 
-                    alt={room.type} 
-                    className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" 
-                  />
+                  <img src={getRoomImage(room.type)} alt={room.type} className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
                   <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
                     <p className="font-bold text-[#0ea5e9]">${(room.price_cents / 100).toFixed(2)} / night</p>
                   </div>
@@ -99,6 +99,9 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      {/* Contact Section */}
+      <ContactUs />
     </div>
   );
 }

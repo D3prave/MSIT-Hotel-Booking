@@ -26,8 +26,8 @@ export default function LoginForm() {
       alert(error.message);
       setLoading(false);
     } else {
+      window.location.replace("/");
       router.refresh();
-      window.location.href = "/";
     }
   };
 
