@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
 
-// Kluczowe dla Next.js 16: zapobiega błędom prerenderingu na Vercel
+// Kluczowe: wymusza renderowanie dynamiczne i zapobiega błędom next build
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -27,9 +27,9 @@ export default function LoginPage() {
       alert(error.message);
       setLoading(false);
     } else {
-      // Refresh zapewnia synchronizację sesji
+      // Refresh synchronizuje sesję z middleware (proxy)
       router.refresh();
-      // Używamy window.location dla absolutnej pewności po stronie klienta
+      // Używamy window.location dla twardego przeładowania stanu
       setTimeout(() => {
         window.location.href = "/";
       }, 400);
@@ -37,22 +37,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0b1220]">
-      <div className="w-full max-w-md p-10 bg-white/5 border border-white/10 rounded-[3rem] backdrop-blur-3xl shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-[#0b1220] px-4">
+      <div className="w-full max-w-md p-10 bg-white/5 border border-white/10 rounded-[3.5rem] backdrop-blur-3xl shadow-2xl">
         <div className="mb-12 text-center">
-          <h1 className="font-serif text-5xl font-black italic tracking-tighter text-white uppercase">DENKRAUM</h1>
+          <h1 className="font-serif text-5xl font-black italic tracking-tighter text-white uppercase">
+            DENKRAUM
+          </h1>
         </div>
 
         <form onSubmit={handleAuth} className="space-y-4">
           <input 
             type="email" 
             placeholder="EMAIL" 
+            required
             className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#a87f5d] outline-none transition-all duration-300"
             onChange={e => setEmail(e.target.value)}
           />
           <input 
             type="password" 
             placeholder="PASSWORD" 
+            required
             className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white placeholder:text-white/20 focus:border-[#a87f5d] outline-none transition-all duration-300"
             onChange={e => setPassword(e.target.value)}
           />
