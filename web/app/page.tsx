@@ -16,11 +16,26 @@ export default async function HomePage() {
 
   const getRoomImage = (type: string) => {
     const lowerType = type.toLowerCase();
-    if (lowerType.includes('economy')) return '/economy.jpeg';
-    if (lowerType.includes('suite')) return '/suite.jpeg';
-    if (lowerType.includes('superior')) return '/superior.jpeg';
-    if (lowerType.includes('deluxe')) return '/deluxe.jpeg';
-    return '/room-standard.jpeg';
+
+    // specific combinations FIRST
+    if (lowerType.includes('deluxe')) {
+      return '/deluxe.jpeg';
+    }
+
+    // generic categories after
+    if (lowerType.includes('suite')) {
+      return '/suite.jpeg';
+    }
+
+    if (lowerType.includes('superior')) {
+      return '/superior.jpeg';
+    }
+
+    if (lowerType.includes('economy')) {
+      return '/economy.jpeg';
+    }
+
+    return '/default-room.jpeg';
   };
 
   const experienceGrid = [
@@ -68,14 +83,14 @@ export default async function HomePage() {
 
         {error && <div className="p-4 bg-red-500/10 text-red-500 rounded-xl mb-6">Database Error: {error.message}</div>}
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {rooms && rooms.length > 0 ? (
             rooms.map((room) => (
               <div key={room.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50">
                 <div className="relative aspect-[16/10]">
                   <img src={getRoomImage(room.type)} alt={room.type} className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
                   <div className="absolute bottom-4 left-4 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
-                    <p className="font-bold text-[#0ea5e9]">${(room.price_cents / 100).toFixed(2)} / night</p>
+                    <p className="font-bold text-[#0ea5e9]">€{(room.price_cents / 100).toFixed(2)} / night</p>
                   </div>
                 </div>
                 <div className="p-8 text-left">
