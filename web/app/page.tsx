@@ -67,62 +67,62 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-24 pb-24">
+    <div className="flex flex-col gap-16 pb-16 md:gap-24 md:pb-24">
       <Hero />
       <AboutUs />
 
-      <section id="experience" className="mx-auto max-w-6xl px-4 w-full pt-12 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <h2 className="font-serif text-4xl font-bold text-white uppercase tracking-wider">The DENKRAUM Experience</h2>
+      <section id="experience" className="mx-auto w-full max-w-6xl px-4 pt-8 scroll-mt-24 md:pt-12">
+        <div className="mb-10 text-center md:mb-12">
+          <h2 className="font-serif text-3xl font-bold tracking-wide text-white uppercase sm:text-4xl">The DENKRAUM Experience</h2>
           <div className="mx-auto mt-4 h-1 w-20 bg-[#3d2b1f]" />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {experienceGrid.map((item) => (
-            <div key={item.title} className="group relative h-80 overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
+            <div key={item.title} className="group relative h-64 overflow-hidden rounded-2xl border border-white/10 shadow-2xl sm:h-72 md:h-80">
               <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b1220] via-transparent to-transparent opacity-90" />
               <div className="absolute bottom-6 left-6 text-left">
-                <h3 className="text-xl font-bold text-white">{item.title}</h3>
-                <p className="text-sm text-white/70">{item.desc}</p>
+                <h3 className="text-lg font-bold text-white md:text-xl">{item.title}</h3>
+                <p className="text-xs text-white/70 md:text-sm">{item.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section id="rooms" className="mx-auto max-w-6xl px-4 w-full pt-12 scroll-mt-24">
-        <div className="mb-12 border-l-4 border-[#3d2b1f] pl-6 text-left flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <section id="rooms" className="mx-auto w-full max-w-6xl px-4 pt-8 scroll-mt-24 md:pt-12">
+        <div className="mb-10 flex flex-col gap-6 border-l-4 border-[#3d2b1f] pl-4 text-left md:mb-12 md:flex-row md:items-end md:justify-between md:pl-6">
           <div>
-            <h2 className="font-serif text-4xl font-bold text-white tracking-tight uppercase">Executive Retreats</h2>
-            <p className="mt-2 text-white/60 text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
+            <h2 className="font-serif text-3xl font-bold tracking-tight text-white uppercase sm:text-4xl">Executive Retreats</h2>
+            <p className="mt-2 text-base text-white/60 md:text-lg">25 designer rooms in our historic 1886 farmhouse.</p>
           </div>
           
-          <div className="flex flex-wrap gap-4 bg-white/5 p-4 rounded-xl border border-white/10">
-            <div className="flex flex-col gap-1">
+          <div className="flex w-full max-w-xl flex-col gap-3 rounded-xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:flex-wrap sm:gap-4">
+            <div className="flex min-w-[10.5rem] flex-col gap-1">
               <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Check In</label>
               <input 
                 type="date" 
                 min={today}
                 value={startDate}
                 onChange={handleStartChange}
-                className="bg-transparent text-white border-none focus:ring-0 text-sm [color-scheme:dark]"
+                className="w-full border-none bg-transparent text-sm text-white focus:ring-0 [color-scheme:dark]"
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex min-w-[10.5rem] flex-col gap-1">
               <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Check Out</label>
               <input 
                 type="date" 
                 min={getNextDay(startDate)}
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-white border-none focus:ring-0 text-sm [color-scheme:dark]"
+                className="w-full border-none bg-transparent text-sm text-white focus:ring-0 [color-scheme:dark]"
               />
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
           {rooms.map((room) => (
             <div key={room.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50">
               <div className="relative aspect-[16/10]">
@@ -131,9 +131,9 @@ export default function HomePage() {
                   <p className="font-bold text-[#0ea5e9]">€{(room.price_cents / 100).toFixed(2)} / night</p>
                 </div>
               </div>
-              <div className="p-8 text-left">
-                <h3 className="text-2xl font-bold text-white">{room.type}</h3>
-                <p className="mb-8 mt-2 text-sm text-white/50 leading-relaxed min-h-[3rem]">
+              <div className="p-6 text-left md:p-8">
+                <h3 className="text-xl font-bold text-white md:text-2xl">{room.type}</h3>
+                <p className="mb-6 mt-2 min-h-[2.5rem] text-[13px] leading-relaxed text-white/50 md:mb-8 md:min-h-[3rem] md:text-sm">
                   {room.description || "Premium workspace and farmhouse charm."}
                 </p>
                 <BookRoomForm roomId={room.id} startDate={startDate} endDate={endDate} />

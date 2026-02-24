@@ -62,7 +62,7 @@ export default async function BookingsPage() {
           const total = ((nights * priceCents) / 100).toFixed(2);
 
           return (
-            <div key={booking.id} className="flex flex-col md:flex-row justify-between items-center p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+            <div key={booking.id} className="flex flex-col justify-between gap-6 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:flex-row md:items-center md:p-8">
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-white">{roomType}</h3>
                 <p className="text-[#0ea5e9] font-mono text-sm mt-1">{booking.start_date} — {booking.end_date}</p>
@@ -73,7 +73,7 @@ export default async function BookingsPage() {
                 </span>
               </div>
 
-              <div className="mt-6 md:mt-0 md:px-12 text-center md:text-right min-w-56">
+              <div className="w-full min-w-0 text-left md:mt-0 md:min-w-56 md:px-12 md:text-right">
                 <p className="text-2xl font-bold text-white">{canCalculateTotal ? `€${total}` : "Total pending"}</p>
                 <p className="text-xs text-white/30 uppercase">
                   {canCalculateTotal

@@ -1,16 +1,15 @@
 export function AboutUs() {
   return (
-    <section id="about" className="bg-[#0b1220] py-32 px-6 border-b border-white/5">
+    <section id="about" className="border-b border-white/5 bg-[#0b1220] px-4 py-20 sm:px-6 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-20">
           
-          {/* History & Story */}
-          <div className="space-y-10">
-            <h2 className="font-serif text-5xl md:text-6xl font-black italic tracking-tighter text-white uppercase leading-none">
+          <div className="space-y-8 md:space-y-10">
+            <h2 className="font-serif text-4xl font-black italic leading-none tracking-tight text-white uppercase sm:text-5xl md:text-6xl">
               A Legacy of <br />
               <span className="text-[#a87f5d]">Innovation</span>
             </h2>
-            <div className="space-y-6 text-lg leading-relaxed text-white/50 font-light">
+            <div className="space-y-5 text-base font-light leading-relaxed text-white/55 md:space-y-6 md:text-lg">
               <p>
                 The year 1886 was a pivot point for humanity. While the original stone 
                 walls of our farmhouse were being raised in the Bavarian countryside, 
@@ -29,32 +28,31 @@ export function AboutUs() {
             </div>
           </div>
 
-          {/* Core Pillars - Re-scaled Titles */}
-          <div className="relative border border-white/10 bg-white/[0.03] p-12 md:p-16 rounded-[3.5rem] backdrop-blur-xl shadow-2xl">
-            <div className="space-y-16">
+          <div className="relative rounded-3xl border border-white/10 bg-white/[0.03] p-8 shadow-2xl backdrop-blur-xl sm:p-10 md:rounded-[3.5rem] md:p-16">
+            <div className="space-y-10 md:space-y-16">
               <div className="group">
-                <h3 className="font-serif text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-none transition-colors group-hover:text-[#a87f5d]">
+                <h3 className="font-serif text-2xl font-black italic leading-none tracking-tight text-white uppercase transition-colors group-hover:text-[#a87f5d] sm:text-3xl md:text-5xl">
                   Productivity
                 </h3>
-                <p className="mt-4 text-[14px] text-white/30 leading-relaxed uppercase tracking-[0.3em]">
+                <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/35 leading-relaxed md:text-[14px] md:tracking-[0.3em]">
                   Focused workspaces designed for deep work and executive clarity.
                 </p>
               </div>
 
               <div className="group">
-                <h3 className="font-serif text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-none transition-colors group-hover:text-[#a87f5d]">
+                <h3 className="font-serif text-2xl font-black italic leading-none tracking-tight text-white uppercase transition-colors group-hover:text-[#a87f5d] sm:text-3xl md:text-5xl">
                   Regeneration
                 </h3>
-                <p className="mt-4 text-[14px] text-white/30 leading-relaxed uppercase tracking-[0.3em]">
+                <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/35 leading-relaxed md:text-[14px] md:tracking-[0.3em]">
                   Boutique wellness and Finnish sauna traditions for total recovery.
                 </p>
               </div>
 
               <div className="group">
-                <h3 className="font-serif text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-none transition-colors group-hover:text-[#a87f5d]">
+                <h3 className="font-serif text-2xl font-black italic leading-none tracking-tight text-white uppercase transition-colors group-hover:text-[#a87f5d] sm:text-3xl md:text-5xl">
                   Experience
                 </h3>
-                <p className="mt-4 text-[14px] text-white/30 leading-relaxed uppercase tracking-[0.3em]">
+                <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/35 leading-relaxed md:text-[14px] md:tracking-[0.3em]">
                   Scenic driving routes and classic-car culture at the gateway to nature.
                 </p>
               </div>
