@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
 
-// Kluczowe: wymusza renderowanie dynamiczne i zapobiega błędom next build
+// Wymuszamy tryb dynamiczny, aby Vercel nie próbował budować tej strony statycznie
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -12,8 +12,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const supabase = createSupabaseBrowserClient();
   const router = useRouter();
+
+  // Inicjalizujemy klienta wewnątrz komponentu
+  const supabase = createSupabaseBrowserClient();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,9 +29,8 @@ export default function LoginPage() {
       alert(error.message);
       setLoading(false);
     } else {
-      // Refresh synchronizuje sesję z middleware (proxy)
+      // Refresh i twarde przekierowanie dla czystej sesji
       router.refresh();
-      // Używamy window.location dla twardego przeładowania stanu
       setTimeout(() => {
         window.location.href = "/";
       }, 400);
