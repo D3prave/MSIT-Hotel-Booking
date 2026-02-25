@@ -79,6 +79,12 @@ export default function HomePage() {
     if (new Date(newStart) >= new Date(endDate)) {
       setEndDate(getNextDay(newStart));
     }
+    e.currentTarget.blur();
+  };
+
+  const handleEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(e.target.value);
+    e.currentTarget.blur();
   };
 
   const openDatePicker = (input: HTMLInputElement | null) => {
@@ -219,7 +225,7 @@ export default function HomePage() {
                 type="date" 
                 min={getNextDay(startDate)}
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={handleEndChange}
                 data-testid="checkout-input"
                 ref={endInputRef}
                 className="date-input w-full border-none bg-transparent p-0 pr-8 text-sm text-white focus:ring-0"

@@ -246,9 +246,9 @@ export const translations = {
       estate: "KIPFENBERG ANWESEN",
     },
     hero: {
-      line1: "Klar arbeiten.",
-      line2: "Tief erholen.",
-      line3: "Frei fahren.",
+      line1: "Work clearly.",
+      line2: "Rest deeply.",
+      line3: "Drive freely.",
       subheadline:
         "Ihre professionelle Agenda wird in unserem historischen Bauernhaus zu wertvoller persoenlicher Zeit.",
     },
@@ -325,10 +325,10 @@ export const translations = {
       pricePerNight: "/ Nacht",
       roomFallbackDescription: "Premium-Arbeitsraum und Bauernhaus-Charme.",
       roomTypeByCategory: {
-        attic: "1886 Dachgeschoss Suite",
+        attic: "The 1886 Attic Suite",
         deluxe: "Deluxe Business Suite",
-        economy: "Economy Arbeitszimmer",
-        superior: "Superior Gartenblick",
+        economy: "Economy Workroom",
+        superior: "Superior Garden View",
       },
     },
     roomForm: {
