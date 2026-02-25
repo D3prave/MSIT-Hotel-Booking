@@ -31,34 +31,29 @@ body {
 
 .reveal {
   opacity: 0;
-  transform: translate3d(0, 74px, 0) scale(0.965);
-  filter: blur(6px);
+  transform: translate3d(0, 38px, 0) scale(0.985);
   transition:
-    opacity var(--reveal-opacity-duration, 640ms) cubic-bezier(0.22, 1, 0.36, 1),
-    transform var(--reveal-transform-duration, 920ms) cubic-bezier(0.22, 1, 0.36, 1),
-    filter var(--reveal-filter-duration, 620ms) cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform, filter;
+    opacity var(--reveal-opacity-duration, 520ms) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--reveal-transform-duration, 760ms) cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
   backface-visibility: hidden;
 }
 
 .reveal-header {
-  --reveal-opacity-duration: 760ms;
-  --reveal-transform-duration: 1120ms;
-  --reveal-filter-duration: 700ms;
-  transform: translate3d(0, 92px, 0) scale(0.96);
+  --reveal-opacity-duration: 620ms;
+  --reveal-transform-duration: 860ms;
+  transform: translate3d(0, 56px, 0) scale(0.98);
 }
 
 .reveal-card {
-  --reveal-opacity-duration: 500ms;
-  --reveal-transform-duration: 760ms;
-  --reveal-filter-duration: 500ms;
-  transform: translate3d(0, 48px, 0) scale(0.97);
+  --reveal-opacity-duration: 420ms;
+  --reveal-transform-duration: 620ms;
+  transform: translate3d(0, 26px, 0) scale(0.99);
 }
 
 .reveal.is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
-  filter: blur(0);
 }
 
 .hero-parallax-layer {

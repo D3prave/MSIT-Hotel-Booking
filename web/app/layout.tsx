@@ -6,13 +6,12 @@ import SmoothScrollProvider from "@/components/providers/smooth-scroll";
 import LanguageProvider from "@/components/providers/language-provider";
 import ToastProvider from "@/components/providers/toast-provider";
 import { getServerLocale } from "@/lib/i18n/server";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "DENKRAUM 1886",
   description: "Executive Retreat in Kipfenberg",
 };
-
-export const dynamic = "force-dynamic";
 
 export default async function RootLayout({
   children,
@@ -27,12 +26,13 @@ export default async function RootLayout({
         <LanguageProvider initialLocale={locale}>
           <ToastProvider>
             <SmoothScrollProvider>
-              <Navbar />
+              <Navbar adminEmailsRaw={process.env.ADMIN_EMAILS ?? ""} />
               <main id="top">{children}</main>
               <Footer />
             </SmoothScrollProvider>
           </ToastProvider>
         </LanguageProvider>
+        <SpeedInsights />
       </body>
     </html>
   );

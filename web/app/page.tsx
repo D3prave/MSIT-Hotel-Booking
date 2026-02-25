@@ -91,9 +91,11 @@ export default function HomePage() {
 
     updateParallax();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("lenis-scroll", onScroll);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("lenis-scroll", onScroll);
       if (rafId) window.cancelAnimationFrame(rafId);
       document.documentElement.style.setProperty("--hero-parallax-y", "0px");
     };
@@ -159,7 +161,6 @@ export default function HomePage() {
     if (revealElements.length === 0) return;
 
     let rafId = 0;
-    let intervalId = 0;
 
     const applyRevealState = () => {
       const vh = window.innerHeight;
@@ -181,15 +182,15 @@ export default function HomePage() {
 
     requestRevealUpdate();
     window.addEventListener("scroll", requestRevealUpdate, { passive: true });
+    window.addEventListener("lenis-scroll", requestRevealUpdate);
     window.addEventListener("touchmove", requestRevealUpdate, { passive: true });
     window.addEventListener("resize", requestRevealUpdate);
-    intervalId = window.setInterval(requestRevealUpdate, 120);
 
     return () => {
       window.removeEventListener("scroll", requestRevealUpdate);
+      window.removeEventListener("lenis-scroll", requestRevealUpdate);
       window.removeEventListener("touchmove", requestRevealUpdate);
       window.removeEventListener("resize", requestRevealUpdate);
-      window.clearInterval(intervalId);
       if (rafId) window.cancelAnimationFrame(rafId);
     };
   }, [locale, rooms.length]);
@@ -373,6 +374,7 @@ export default function HomePage() {
                 src={item.img}
                 alt={item.title}
                 fill
+                quality={74}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
@@ -452,6 +454,7 @@ export default function HomePage() {
                   src={card.image}
                   alt={card.title}
                   fill
+                  quality={76}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover opacity-80 transition-opacity group-hover:opacity-100"
                 />

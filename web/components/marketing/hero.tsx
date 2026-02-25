@@ -15,6 +15,7 @@ export function Hero({ line1, line2, line3, subheadline }: HeroProps) {
         alt="DENKRAUM Lobby"
         fill
         priority
+        quality={78}
         sizes="100vw"
         className="hero-parallax-layer object-cover opacity-45"
       />
