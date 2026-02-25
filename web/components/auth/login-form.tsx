@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -12,16 +12,41 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const router = useRouter();
   const { t } = useLanguage();
   const { addToast } = useToast();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (!isMounted) return;
+      if (data.session) {
+        router.replace("/");
+        router.refresh();
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) return;
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        router.replace("/");
+        router.refresh();
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, [router, supabase]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = isRegistering 
+    const { data, error } = isRegistering 
       ? await supabase.auth.signUp({ email, password })
       : await supabase.auth.signInWithPassword({ email, password });
 
@@ -29,9 +54,27 @@ export default function LoginForm() {
       addToast(error.message || t.notifications.loginFailed, "error");
       setLoading(false);
     } else {
-      // Refresh to update server components and redirect to home
+      if (isRegistering && !data.session) {
+        addToast("Account created. Confirm email, then sign in.", "success");
+        setIsRegistering(false);
+        setLoading(false);
+        return;
+      }
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        addToast(t.notifications.loginFailed, "error");
+        setLoading(false);
+        return;
+      }
+
       router.refresh();
-      window.location.href = "/";
+      router.replace("/");
+      window.setTimeout(() => {
+        if (window.location.pathname === "/login") {
+          window.location.assign("/");
+        }
+      }, 300);
     }
   };
 
