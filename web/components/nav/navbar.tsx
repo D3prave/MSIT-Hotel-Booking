@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import SignOutButton from "./sign-out-button";
 import { getServerLocale } from "@/lib/i18n/server";
@@ -8,6 +9,7 @@ import LanguageToggle from "./language-toggle";
 import { isAdminUser } from "@/lib/auth/admin";
 
 export default async function Navbar() {
+  noStore();
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isAdmin = isAdminUser(user);

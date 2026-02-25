@@ -11,6 +11,7 @@
 :root {
   --background: var(--color-navy);
   --foreground: #e5e7eb;
+  --hero-parallax-y: 0px;
 }
 
 body {
@@ -26,4 +27,41 @@ body {
 
 .date-input::-webkit-calendar-picker-indicator {
   opacity: 0;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 74px, 0) scale(0.965);
+  filter: blur(6px);
+  transition:
+    opacity var(--reveal-opacity-duration, 640ms) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--reveal-transform-duration, 920ms) cubic-bezier(0.22, 1, 0.36, 1),
+    filter var(--reveal-filter-duration, 620ms) cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+  backface-visibility: hidden;
+}
+
+.reveal-header {
+  --reveal-opacity-duration: 760ms;
+  --reveal-transform-duration: 1120ms;
+  --reveal-filter-duration: 700ms;
+  transform: translate3d(0, 92px, 0) scale(0.96);
+}
+
+.reveal-card {
+  --reveal-opacity-duration: 500ms;
+  --reveal-transform-duration: 760ms;
+  --reveal-filter-duration: 500ms;
+  transform: translate3d(0, 48px, 0) scale(0.97);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+.hero-parallax-layer {
+  transform: translate3d(0, var(--hero-parallax-y), 0) scale(1.07);
+  will-change: transform;
 }

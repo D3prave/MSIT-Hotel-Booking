@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Executive Retreat in Kipfenberg",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
   children,
 }: {

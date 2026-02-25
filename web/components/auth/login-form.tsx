@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
-import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useToast } from "@/components/providers/toast-provider";
 
@@ -13,7 +12,6 @@ export default function LoginForm() {
   const [isRegistering, setIsRegistering] = useState(false);
   
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-  const router = useRouter();
   const { t } = useLanguage();
   const { addToast } = useToast();
 
@@ -23,16 +21,14 @@ export default function LoginForm() {
     supabase.auth.getSession().then(({ data }) => {
       if (!isMounted) return;
       if (data.session) {
-        router.replace("/");
-        router.refresh();
+        window.location.replace("/");
       }
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) return;
       if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-        router.replace("/");
-        router.refresh();
+        window.location.replace("/");
       }
     });
 
@@ -40,7 +36,7 @@ export default function LoginForm() {
       isMounted = false;
       authListener.subscription.unsubscribe();
     };
-  }, [router, supabase]);
+  }, [supabase]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,20 +57,14 @@ export default function LoginForm() {
         return;
       }
 
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session) {
+      const resolvedSession = data.session ?? (await supabase.auth.getSession()).data.session;
+      if (!resolvedSession) {
         addToast(t.notifications.loginFailed, "error");
         setLoading(false);
         return;
       }
 
-      router.refresh();
-      router.replace("/");
-      window.setTimeout(() => {
-        if (window.location.pathname === "/login") {
-          window.location.assign("/");
-        }
-      }, 300);
+      window.location.assign("/");
     }
   };
 

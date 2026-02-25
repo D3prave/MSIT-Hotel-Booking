@@ -21,6 +21,8 @@ type Room = {
   type: string;
 };
 
+const SECTION_IDS = ["about", "experience", "rooms", "contact"] as const;
+type SectionId = (typeof SECTION_IDS)[number];
 const CATEGORY_ORDER: RoomCategory[] = ["economy", "superior", "deluxe", "attic"];
 
 const CATEGORY_IMAGE: Record<RoomCategory, string> = {
@@ -61,6 +63,7 @@ export default function HomePage() {
   const today = getTodayLocalDateInputValue();
   const [startDate, setStartDate] = useState(getTodayLocalDateInputValue);
   const [endDate, setEndDate] = useState(() => getNextDay(getTodayLocalDateInputValue()));
+  const [activeSection, setActiveSection] = useState<SectionId>("about");
   const startInputRef = useRef<HTMLInputElement>(null);
   const endInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,6 +74,125 @@ export default function HomePage() {
     };
     fetchRooms();
   }, [supabase]);
+
+  useEffect(() => {
+    let rafId = 0;
+
+    const updateParallax = () => {
+      const y = Math.min(window.scrollY * 0.18, 120);
+      document.documentElement.style.setProperty("--hero-parallax-y", `${y}px`);
+      rafId = 0;
+    };
+
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(updateParallax);
+    };
+
+    updateParallax();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) window.cancelAnimationFrame(rafId);
+      document.documentElement.style.setProperty("--hero-parallax-y", "0px");
+    };
+  }, []);
+
+  useEffect(() => {
+    const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(
+      (element): element is HTMLElement => Boolean(element)
+    );
+    if (sections.length === 0) return;
+
+    const sectionRatios = new Map<SectionId, number>();
+    SECTION_IDS.forEach((id) => sectionRatios.set(id, 0));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id as SectionId;
+          sectionRatios.set(id, entry.isIntersecting ? entry.intersectionRatio : 0);
+        }
+
+        let bestId: SectionId = SECTION_IDS[0];
+        let bestRatio = -1;
+        for (const id of SECTION_IDS) {
+          const ratio = sectionRatios.get(id) ?? 0;
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        }
+
+        if (bestRatio <= 0) {
+          const fallback = sections
+            .map((element) => ({
+              id: element.id as SectionId,
+              offset: Math.abs(element.getBoundingClientRect().top - window.innerHeight * 0.32),
+            }))
+            .sort((a, b) => a.offset - b.offset)[0];
+          if (fallback) bestId = fallback.id;
+        }
+
+        setActiveSection(bestId);
+      },
+      {
+        rootMargin: "-30% 0px -45% 0px",
+        threshold: [0, 0.15, 0.35, 0.6, 0.9],
+      }
+    );
+
+    for (const section of sections) {
+      observer.observe(section);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [locale]);
+
+  useEffect(() => {
+    const revealElements = Array.from(
+      document.querySelectorAll<HTMLElement>(".reveal")
+    );
+    if (revealElements.length === 0) return;
+
+    let rafId = 0;
+    let intervalId = 0;
+
+    const applyRevealState = () => {
+      const vh = window.innerHeight;
+      const enterTop = vh * 0.9;
+      const minVisibleBottom = vh * 0.04;
+
+      for (const element of revealElements) {
+        const rect = element.getBoundingClientRect();
+        const shouldShow = rect.top < enterTop && rect.bottom > minVisibleBottom;
+        element.classList.toggle("is-visible", shouldShow);
+      }
+      rafId = 0;
+    };
+
+    const requestRevealUpdate = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(applyRevealState);
+    };
+
+    requestRevealUpdate();
+    window.addEventListener("scroll", requestRevealUpdate, { passive: true });
+    window.addEventListener("touchmove", requestRevealUpdate, { passive: true });
+    window.addEventListener("resize", requestRevealUpdate);
+    intervalId = window.setInterval(requestRevealUpdate, 120);
+
+    return () => {
+      window.removeEventListener("scroll", requestRevealUpdate);
+      window.removeEventListener("touchmove", requestRevealUpdate);
+      window.removeEventListener("resize", requestRevealUpdate);
+      window.clearInterval(intervalId);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
+  }, [locale, rooms.length]);
 
   const handleStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newStart = e.target.value;
@@ -112,6 +234,19 @@ export default function HomePage() {
       return;
     }
     input.focus();
+  };
+
+  const sectionNavItems: Array<{ id: SectionId; label: string }> = [
+    { id: "about", label: t.navbar.aboutUs },
+    { id: "experience", label: t.navbar.experience },
+    { id: "rooms", label: t.navbar.rooms },
+    { id: "contact", label: t.navbar.contact },
+  ];
+
+  const scrollToSection = (id: SectionId) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const experienceImages = [
@@ -169,28 +304,71 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-16 pb-16 md:gap-24 md:pb-24">
-      <Hero
-        line1={t.hero.line1}
-        line2={t.hero.line2}
-        line3={t.hero.line3}
-        subheadline={t.hero.subheadline}
-      />
-      <AboutUs
-        paragraphs={t.about.paragraphs}
-        pillars={t.about.pillars}
-        titleHighlight={t.about.titleHighlight}
-        titlePrefix={t.about.titlePrefix}
-      />
+      <div className="pointer-events-none fixed right-3 top-1/2 z-40 hidden -translate-y-1/2 md:block">
+        <div className="pointer-events-auto rounded-2xl border border-white/10 bg-[#0b1220]/55 p-2 backdrop-blur-xl shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
+          <div className="flex flex-col gap-1.5">
+            {sectionNavItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => scrollToSection(item.id)}
+                  className={`group flex items-center gap-2 rounded-xl px-2 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] transition-colors ${
+                    isActive ? "text-white" : "text-white/45 hover:text-white/85"
+                  }`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full transition-all ${
+                      isActive
+                        ? "bg-[#a87f5d] scale-110 shadow-[0_0_10px_rgba(168,127,93,0.65)]"
+                        : "bg-white/35 group-hover:bg-white/60"
+                    }`}
+                  />
+                  <span
+                    className={`transition-opacity ${
+                      isActive ? "opacity-100" : "opacity-55 group-hover:opacity-95"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="reveal reveal-header">
+        <Hero
+          line1={t.hero.line1}
+          line2={t.hero.line2}
+          line3={t.hero.line3}
+          subheadline={t.hero.subheadline}
+        />
+      </div>
+      <div className="reveal reveal-header">
+        <AboutUs
+          paragraphs={t.about.paragraphs}
+          pillars={t.about.pillars}
+          titleHighlight={t.about.titleHighlight}
+          titlePrefix={t.about.titlePrefix}
+        />
+      </div>
 
       <section id="experience" className="mx-auto w-full max-w-6xl px-4 pt-8 scroll-mt-24 md:pt-12">
-        <div className="mb-10 text-center md:mb-12">
+        <div className="reveal reveal-header mb-10 text-center md:mb-12">
           <h2 className="font-serif text-3xl font-bold tracking-wide text-white uppercase sm:text-4xl">{t.home.experienceTitle}</h2>
           <div className="mx-auto mt-4 h-1 w-20 bg-[#3d2b1f]" />
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-          {experienceGrid.map((item) => (
-            <div key={item.title} className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 shadow-2xl sm:aspect-[5/4]">
+          {experienceGrid.map((item, index) => (
+            <div
+              key={item.title}
+              className="reveal reveal-card group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 shadow-2xl sm:aspect-[5/4]"
+              style={{ transitionDelay: `${index * 90}ms` }}
+            >
               <Image
                 src={item.img}
                 alt={item.title}
@@ -209,7 +387,7 @@ export default function HomePage() {
       </section>
 
       <section id="rooms" className="mx-auto w-full max-w-6xl px-4 pt-8 scroll-mt-24 md:pt-12">
-        <div className="mb-10 flex flex-col gap-6 border-l-4 border-[#3d2b1f] pl-4 text-left md:mb-12 md:flex-row md:items-end md:justify-between md:pl-6">
+        <div className="reveal reveal-header mb-10 flex flex-col gap-6 border-l-4 border-[#3d2b1f] pl-4 text-left md:mb-12 md:flex-row md:items-end md:justify-between md:pl-6">
           <div>
             <h2 className="font-serif text-3xl font-bold tracking-tight text-white uppercase sm:text-4xl">{t.home.executiveTitle}</h2>
             <p className="mt-2 text-base text-white/60 md:text-lg">{t.home.executiveSubtitle}</p>
@@ -260,13 +438,14 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
-          {roomCards.map((card) => {
+          {roomCards.map((card, index) => {
             return (
             <div
               key={card.category}
               data-testid="room-card"
               data-room-category={card.category}
-              className="group h-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50"
+              className="reveal reveal-card group h-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50"
+              style={{ transitionDelay: `${index * 110}ms` }}
             >
               <div className="relative aspect-[16/9]">
                 <Image
@@ -303,16 +482,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ContactUs
-        email={t.contact.email}
-        journal={t.contact.journal}
-        location={t.contact.location}
-        locationLine1={t.contact.locationLine1}
-        locationLine2={t.contact.locationLine2}
-        stay={t.contact.stay}
-        titleHighlight={t.contact.titleHighlight}
-        titlePrefix={t.contact.titlePrefix}
-      />
+      <div className="reveal reveal-header">
+        <ContactUs
+          email={t.contact.email}
+          journal={t.contact.journal}
+          location={t.contact.location}
+          locationLine1={t.contact.locationLine1}
+          locationLine2={t.contact.locationLine2}
+          stay={t.contact.stay}
+          titleHighlight={t.contact.titleHighlight}
+          titlePrefix={t.contact.titlePrefix}
+        />
+      </div>
     </div>
   );
 }

@@ -16,7 +16,7 @@ export function Hero({ line1, line2, line3, subheadline }: HeroProps) {
         fill
         priority
         sizes="100vw"
-        className="object-cover opacity-45"
+        className="hero-parallax-layer object-cover opacity-45"
       />
       
       <div className="absolute inset-0 bg-gradient-to-b from-[#0b1220] via-transparent to-[#0b1220] opacity-80" />
