@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useToast } from "@/components/providers/toast-provider";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -12,6 +14,8 @@ export default function LoginForm() {
   
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
+  const { t } = useLanguage();
+  const { addToast } = useToast();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +26,7 @@ export default function LoginForm() {
       : await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      alert(error.message);
+      addToast(error.message || t.notifications.loginFailed, "error");
       setLoading(false);
     } else {
       // Refresh to update server components and redirect to home
@@ -40,14 +44,14 @@ export default function LoginForm() {
         <form onSubmit={handleAuth} className="space-y-4">
           <input 
             type="email" 
-            placeholder="EMAIL" 
+            placeholder={t.login.email}
             required
             className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white outline-none focus:border-[#a87f5d] transition-all"
             onChange={e => setEmail(e.target.value)}
           />
           <input 
             type="password" 
-            placeholder="PASSWORD" 
+            placeholder={t.login.password}
             required
             className="w-full bg-white/5 border border-white/5 p-6 rounded-2xl text-white outline-none focus:border-[#a87f5d] transition-all"
             onChange={e => setPassword(e.target.value)}
@@ -57,14 +61,14 @@ export default function LoginForm() {
             disabled={loading}
             className="w-full bg-[#3d2b1f] py-6 rounded-2xl font-black uppercase tracking-widest text-white hover:brightness-125 active:scale-95 transition-all"
           >
-            {loading ? "AUTHENTICATING..." : isRegistering ? "CREATE ACCOUNT" : "SIGN IN"}
+            {loading ? t.login.authenticating : isRegistering ? t.login.createAccount : t.login.signIn}
           </button>
         </form>
         <button 
           onClick={() => setIsRegistering(!isRegistering)}
           className="w-full mt-10 text-[9px] font-bold text-white/20 uppercase tracking-[0.4em] hover:text-[#a87f5d] transition-colors"
         >
-          {isRegistering ? "BACK TO SIGN IN" : "NO ACCOUNT? REGISTER"}
+          {isRegistering ? t.login.backToSignIn : t.login.noAccountRegister}
         </button>
       </div>
     </div>

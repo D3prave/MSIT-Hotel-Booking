@@ -3,7 +3,11 @@
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useRouter } from "next/navigation";
 
-export default function SignOutButton() {
+type SignOutButtonProps = {
+  label?: string;
+};
+
+export default function SignOutButton({ label = "Sign Out" }: SignOutButtonProps) {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
@@ -29,7 +33,7 @@ export default function SignOutButton() {
       onClick={handleSignOut}
       className="hover:text-red-500 transition-colors font-black uppercase active:scale-95 duration-300"
     >
-      Sign Out
+      {label}
     </button>
   );
 }
