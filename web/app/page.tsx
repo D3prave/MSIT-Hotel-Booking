@@ -1,8 +1,9 @@
 // web/app/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { CalendarDays } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { Hero } from "@/components/marketing/hero";
 import { AboutUs } from "@/components/marketing/about-us";
@@ -60,6 +61,8 @@ export default function HomePage() {
   const today = getTodayLocalDateInputValue();
   const [startDate, setStartDate] = useState(getTodayLocalDateInputValue);
   const [endDate, setEndDate] = useState(() => getNextDay(getTodayLocalDateInputValue()));
+  const startInputRef = useRef<HTMLInputElement>(null);
+  const endInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -76,6 +79,16 @@ export default function HomePage() {
     if (new Date(newStart) >= new Date(endDate)) {
       setEndDate(getNextDay(newStart));
     }
+  };
+
+  const openDatePicker = (input: HTMLInputElement | null) => {
+    if (!input) return;
+    const withPicker = input as HTMLInputElement & { showPicker?: () => void };
+    if (typeof withPicker.showPicker === "function") {
+      withPicker.showPicker();
+      return;
+    }
+    input.focus();
   };
 
   const experienceImages = [
@@ -180,7 +193,7 @@ export default function HomePage() {
           </div>
           
           <div className="grid w-full grid-cols-1 gap-3 rounded-xl border border-white/10 bg-white/5 p-4 sm:max-w-md sm:grid-cols-2 sm:gap-4 md:w-auto md:max-w-[30rem]">
-            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-[#0b1220]/35 px-3 py-2">
+            <div className="relative flex flex-col gap-1 rounded-lg border border-white/10 bg-[#0b1220]/35 px-3 py-2">
               <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t.home.checkIn}</label>
               <input 
                 type="date" 
@@ -188,10 +201,19 @@ export default function HomePage() {
                 value={startDate}
                 onChange={handleStartChange}
                 data-testid="checkin-input"
-                className="w-full border-none bg-transparent p-0 text-sm text-white focus:ring-0 [color-scheme:dark]"
+                ref={startInputRef}
+                className="date-input w-full border-none bg-transparent p-0 pr-8 text-sm text-white focus:ring-0"
               />
+              <button
+                type="button"
+                onClick={() => openDatePicker(startInputRef.current)}
+                aria-label={t.home.checkIn}
+                className="absolute right-2 bottom-2 text-white/50 transition-colors hover:text-white"
+              >
+                <CalendarDays size={16} />
+              </button>
             </div>
-            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-[#0b1220]/35 px-3 py-2">
+            <div className="relative flex flex-col gap-1 rounded-lg border border-white/10 bg-[#0b1220]/35 px-3 py-2">
               <label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t.home.checkOut}</label>
               <input 
                 type="date" 
@@ -199,8 +221,17 @@ export default function HomePage() {
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 data-testid="checkout-input"
-                className="w-full border-none bg-transparent p-0 text-sm text-white focus:ring-0 [color-scheme:dark]"
+                ref={endInputRef}
+                className="date-input w-full border-none bg-transparent p-0 pr-8 text-sm text-white focus:ring-0"
               />
+              <button
+                type="button"
+                onClick={() => openDatePicker(endInputRef.current)}
+                aria-label={t.home.checkOut}
+                className="absolute right-2 bottom-2 text-white/50 transition-colors hover:text-white"
+              >
+                <CalendarDays size={16} />
+              </button>
             </div>
           </div>
         </div>
