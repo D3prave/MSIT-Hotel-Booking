@@ -79,16 +79,33 @@ export default function HomePage() {
     if (new Date(newStart) >= new Date(endDate)) {
       setEndDate(getNextDay(newStart));
     }
-    e.currentTarget.blur();
+    closeDatePicker(e.currentTarget);
   };
 
   const handleEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEndDate(e.target.value);
-    e.currentTarget.blur();
+    closeDatePicker(e.currentTarget);
+  };
+
+  const closeDatePicker = (input: HTMLInputElement | null) => {
+    if (!input) return;
+    input.blur();
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
+    window.requestAnimationFrame(() => {
+      input.blur();
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    });
   };
 
   const openDatePicker = (input: HTMLInputElement | null) => {
     if (!input) return;
+    input.focus({ preventScroll: true });
     const withPicker = input as HTMLInputElement & { showPicker?: () => void };
     if (typeof withPicker.showPicker === "function") {
       withPicker.showPicker();
