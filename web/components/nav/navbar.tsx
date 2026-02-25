@@ -23,7 +23,7 @@ export default async function Navbar() {
             alt="DENKRAUM"
             width={120}
             height={48}
-            className="h-8 w-auto rounded-sm bg-[#f6efe2] p-1 shadow-[0_2px_10px_rgba(0,0,0,0.25)] transition-transform duration-700 group-hover:scale-110 sm:h-8 md:h-8"
+            className="h-8 w-auto rounded-[6px] transition-transform duration-700 group-hover:scale-110 sm:h-8 md:h-8"
           />
           <span className="font-serif text-base font-black italic leading-none tracking-tight text-white uppercase sm:text-lg md:text-[20px]">
             DENKRAUM 1886
