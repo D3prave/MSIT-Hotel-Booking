@@ -18,6 +18,7 @@ type SendServiceBookingEmailInput = {
   locale: Locale;
   participants: number;
   serviceDate: string;
+  serviceTimeSlot?: string | null;
   serviceTitle: string;
   toEmail: string | null | undefined;
   totalPriceCents: number;
@@ -33,6 +34,12 @@ function parseBoolean(value: string | undefined, fallback: boolean) {
   if (normalized === "true") return true;
   if (normalized === "false") return false;
   return fallback;
+}
+
+function normalizeServiceTimeSlot(value: string | null | undefined) {
+  if (!value) return "-";
+  const match = value.match(/\d{2}:\d{2}/);
+  return match ? match[0] : value.trim();
 }
 
 function getEventLabels(locale: Locale, event: BookingEmailEvent) {
@@ -184,11 +191,13 @@ export async function sendServiceBookingEmail(input: SendServiceBookingEmailInpu
 
   const { headline, subject } = getServiceEventLabels(input.locale, input.event);
   const totalPrice = (input.totalPriceCents / 100).toFixed(2);
+  const serviceTimeSlot = normalizeServiceTimeSlot(input.serviceTimeSlot);
 
   const text =
     `${headline}\n` +
     `Service: ${input.serviceTitle}\n` +
     `Date: ${input.serviceDate}\n` +
+    `Start time: ${serviceTimeSlot}\n` +
     `Participants: ${input.participants}\n` +
     `Total: EUR ${totalPrice}\n`;
 
@@ -197,6 +206,7 @@ export async function sendServiceBookingEmail(input: SendServiceBookingEmailInpu
       <h2 style="margin:0 0 12px">${headline}</h2>
       <p style="margin:0 0 6px"><strong>Service:</strong> ${input.serviceTitle}</p>
       <p style="margin:0 0 6px"><strong>Date:</strong> ${input.serviceDate}</p>
+      <p style="margin:0 0 6px"><strong>Start time:</strong> ${serviceTimeSlot}</p>
       <p style="margin:0 0 6px"><strong>Participants:</strong> ${input.participants}</p>
       <p style="margin:0 0 6px"><strong>Total:</strong> EUR ${totalPrice}</p>
     </div>

@@ -3,8 +3,9 @@ import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { redirect } from "next/navigation";
 import BookingActions from "@/components/booking/booking-actions";
 import ServiceBookingActions from "@/components/booking/service-booking-actions";
+import WaitlistActions from "@/components/booking/waitlist-actions";
 import { getServerLocale } from "@/lib/i18n/server";
-import { getRoomCategory, translations } from "@/lib/i18n/translations";
+import { getRoomCategory, isRoomCategory, translations } from "@/lib/i18n/translations";
 
 export const dynamic = "force-dynamic";
 
@@ -27,11 +28,26 @@ type ServiceBookingRow = {
   participants: number;
   service_code: string;
   service_date: string;
+  service_time_slot: string | null;
   service_title: string;
   status: string;
   total_price_cents: number;
   unit_price_cents: number;
 };
+
+type WaitlistRow = {
+  end_date: string;
+  id: string;
+  room_category: string;
+  start_date: string;
+  status: string;
+};
+
+function normalizeServiceTimeSlot(value: string | null | undefined) {
+  if (!value) return null;
+  const match = value.match(/\d{2}:\d{2}/);
+  return match ? match[0] : value.trim();
+}
 
 function getRoomSummary(rooms: BookingRow["rooms"]): RoomSummary | null {
   if (!rooms) return null;
@@ -53,15 +69,38 @@ export default async function BookingsPage() {
     .order("created_at", { ascending: false });
   const bookingRows = (bookings ?? []) as BookingRow[];
 
-  const { data: serviceBookings, error: serviceBookingsError } = await supabase
+  let { data: serviceBookings, error: serviceBookingsError } = await supabase
     .from("service_bookings")
-    .select("id, service_code, service_title, service_date, participants, unit_price_cents, total_price_cents, status")
+    .select("id, service_code, service_title, service_date, service_time_slot, participants, unit_price_cents, total_price_cents, status")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
+
+  if (serviceBookingsError?.code === "42703") {
+    const legacyQuery = await supabase
+      .from("service_bookings")
+      .select("id, service_code, service_title, service_date, participants, unit_price_cents, total_price_cents, status")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    serviceBookings = (legacyQuery.data ?? []).map((row) => ({
+      ...row,
+      service_time_slot: null,
+    }));
+    serviceBookingsError = legacyQuery.error;
+  }
+
   const serviceBookingRows =
     serviceBookingsError?.code === "42P01"
       ? []
       : ((serviceBookings ?? []) as ServiceBookingRow[]);
+
+  const { data: waitlistData, error: waitlistError } = await supabase
+    .from("room_waitlist")
+    .select("id, room_category, start_date, end_date, status")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+  const waitlistRows =
+    waitlistError?.code === "42P01" ? [] : ((waitlistData ?? []) as WaitlistRow[]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-36 md:pt-40">
@@ -144,6 +183,7 @@ export default async function BookingsPage() {
         {serviceBookingRows.map((serviceBooking) => {
           const isConfirmed = serviceBooking.status === "confirmed";
           const total = (serviceBooking.total_price_cents / 100).toFixed(2);
+          const serviceTimeSlot = normalizeServiceTimeSlot(serviceBooking.service_time_slot);
 
           return (
             <div
@@ -152,7 +192,10 @@ export default async function BookingsPage() {
             >
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-white">{serviceBooking.service_title}</h3>
-                <p className="mt-1 text-sm font-mono text-[#0ea5e9]">{serviceBooking.service_date}</p>
+                <p className="mt-1 text-sm font-mono text-[#0ea5e9]">
+                  {serviceBooking.service_date}
+                  {serviceTimeSlot ? ` | ${serviceTimeSlot}` : ""}
+                </p>
                 <p className="mt-2 text-xs uppercase tracking-[0.08em] text-white/45">
                   {t.participantsLabel}: {serviceBooking.participants}
                 </p>
@@ -175,6 +218,48 @@ export default async function BookingsPage() {
               </div>
 
               <ServiceBookingActions serviceBookingId={serviceBooking.id} status={serviceBooking.status} />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-12 mb-5">
+        <h2 className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{t.waitlistSection}</h2>
+      </div>
+
+      <div className="space-y-6">
+        {waitlistRows.length === 0 && (
+          <div className="p-10 text-center border border-dashed border-white/10 rounded-2xl">
+            <p className="text-white/50 italic">{t.waitlistEmpty}</p>
+          </div>
+        )}
+
+        {waitlistRows.map((entry) => {
+          const roomCategory = isRoomCategory(entry.room_category) ? entry.room_category : null;
+          const roomTypeLabel = roomCategory
+            ? translations[locale].home.roomTypeByCategory[roomCategory]
+            : entry.room_category;
+
+          return (
+            <div
+              key={entry.id}
+              className="flex flex-col justify-between gap-5 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:flex-row md:items-center md:p-7"
+            >
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-white">{roomTypeLabel}</h3>
+                <p className="mt-1 text-sm font-mono text-[#0ea5e9]">{entry.start_date} — {entry.end_date}</p>
+                <span
+                  className={`inline-block mt-3 rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-widest ${
+                    entry.status === "open"
+                      ? "border-amber-500/20 bg-amber-500/10 text-amber-300"
+                      : "border-white/20 bg-white/10 text-white/70"
+                  }`}
+                >
+                  {t.waitlistStatus[entry.status as keyof typeof t.waitlistStatus] ?? entry.status}
+                </span>
+              </div>
+
+              <WaitlistActions waitlistId={entry.id} />
             </div>
           );
         })}

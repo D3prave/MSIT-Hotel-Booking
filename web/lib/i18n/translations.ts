@@ -257,6 +257,8 @@ export const translations = {
           role: "Regional Sales Lead, Enterprise SaaS",
         },
       ],
+      availabilityWindowTitle: "Availability (7 days)",
+      soldOutShort: "Full",
       pricePerNight: "/ night",
       roomFallbackDescription: "Premium workspace and farmhouse charm.",
       roomTypeByCategory: {
@@ -269,6 +271,8 @@ export const translations = {
     roomForm: {
       bookRoom: "Book Room",
       checking: "Checking...",
+      joiningWaitlist: "Joining waitlist...",
+      joinWaitlist: "Join Waitlist",
       unavailable: "Unavailable",
     },
     serviceForm: {
@@ -277,6 +281,7 @@ export const translations = {
       dateLabel: "Date",
       estimatedTotal: "Estimated total",
       participantsLabel: "Guests",
+      timeSlotLabel: "Start Time",
     },
     notifications: {
       bookingConfirmed: "Booking confirmed.",
@@ -294,6 +299,13 @@ export const translations = {
       roomIdPrefix: "Room ID",
       serviceBookingsSection: "Service Bookings",
       servicesEmpty: "No service bookings yet.",
+      waitlistEmpty: "No waitlist entries yet.",
+      waitlistSection: "Waitlist",
+      waitlistStatus: {
+        cancelled: "cancelled",
+        converted: "converted",
+        open: "open",
+      },
       status: {
         cancelled: "cancelled",
         confirmed: "confirmed",
@@ -385,12 +397,17 @@ export const translations = {
       invalidServiceDate: "Please choose a valid service date.",
       invalidServiceParticipants: "Please choose a valid number of guests.",
       invalidServiceSelection: "Please choose a valid service.",
+      invalidServiceTimeSlot: "Please choose a valid start time.",
+      invalidWaitlistData: "Please choose a valid room category and dates for waitlist.",
+      invalidWaitlistId: "Invalid waitlist id.",
       notAllowedDelete: "You are not allowed to remove this booking.",
       notAllowedUpdate: "You are not allowed to update this booking.",
       notAllowedServiceDelete:
         "You are not allowed to remove this service booking.",
       notAllowedServiceUpdate:
         "You are not allowed to update this service booking.",
+      notAllowedWaitlistDelete:
+        "You are not allowed to remove this waitlist entry.",
       roomNotAvailable:
         "This room is not available for the selected dates.",
       saveBookingError:
@@ -418,8 +435,30 @@ export const translations = {
         "Could not confirm service booking due to a database write error.",
       serviceDeleteWriteError:
         "Could not remove service booking due to a database write error.",
+      serviceTimeSlotUnavailable:
+        "This start time is already full. Please choose a different start time.",
+      findWaitlistError:
+        "Could not find this waitlist entry right now. Please refresh and try again.",
       findServiceBookingError:
         "Could not find this service booking right now. Please refresh and try again.",
+      waitlistAlreadyExists:
+        "You are already on the waitlist for these dates.",
+      waitlistCreated:
+        "You were added to the waitlist.",
+      waitlistDeleteBlockedPermissions:
+        "Waitlist removal was blocked by database permissions. Please allow DELETE on room_waitlist for the owner.",
+      waitlistDeleteError:
+        "Could not remove waitlist entry due to a database write error.",
+      waitlistInsertBlockedPermissions:
+        "Waitlist creation was blocked by database permissions. Please allow INSERT on room_waitlist for authenticated users.",
+      waitlistNotFound:
+        "Waitlist entry no longer exists.",
+      waitlistRemoved:
+        "Waitlist entry removed successfully.",
+      waitlistSaveError:
+        "We could not save your waitlist request. Please try again.",
+      waitlistTableMissing:
+        "Waitlist table is missing. Please run the room_waitlist SQL migration.",
     },
   },
   de: {
@@ -658,6 +697,8 @@ export const translations = {
           role: "Regional Sales Lead, Enterprise SaaS",
         },
       ],
+      availabilityWindowTitle: "Verfuegbarkeit (7 Tage)",
+      soldOutShort: "Voll",
       pricePerNight: "/ Nacht",
       roomFallbackDescription: "Premium-Arbeitsraum und Bauernhaus-Charme.",
       roomTypeByCategory: {
@@ -670,6 +711,8 @@ export const translations = {
     roomForm: {
       bookRoom: "Zimmer buchen",
       checking: "Pruefe...",
+      joiningWaitlist: "Setze auf Warteliste...",
+      joinWaitlist: "Auf Warteliste",
       unavailable: "Nicht verfuegbar",
     },
     serviceForm: {
@@ -678,6 +721,7 @@ export const translations = {
       dateLabel: "Datum",
       estimatedTotal: "Geschaetzter Gesamtpreis",
       participantsLabel: "Gaeste",
+      timeSlotLabel: "Startzeit",
     },
     notifications: {
       bookingConfirmed: "Buchung bestaetigt.",
@@ -695,6 +739,13 @@ export const translations = {
       roomIdPrefix: "Zimmer-ID",
       serviceBookingsSection: "Service-Buchungen",
       servicesEmpty: "Noch keine Service-Buchungen vorhanden.",
+      waitlistEmpty: "Keine Wartelisten-Eintraege vorhanden.",
+      waitlistSection: "Warteliste",
+      waitlistStatus: {
+        cancelled: "storniert",
+        converted: "umgewandelt",
+        open: "offen",
+      },
       status: {
         cancelled: "storniert",
         confirmed: "bestaetigt",
@@ -790,6 +841,11 @@ export const translations = {
       invalidServiceParticipants:
         "Bitte waehlen Sie eine gueltige Anzahl an Gaesten.",
       invalidServiceSelection: "Bitte waehlen Sie einen gueltigen Service.",
+      invalidServiceTimeSlot:
+        "Bitte waehlen Sie eine gueltige Startzeit.",
+      invalidWaitlistData:
+        "Bitte waehlen Sie eine gueltige Zimmerkategorie und gueltige Daten fuer die Warteliste.",
+      invalidWaitlistId: "Ungueltige Wartelisten-ID.",
       notAllowedDelete:
         "Sie sind nicht berechtigt, diese Buchung zu entfernen.",
       notAllowedUpdate:
@@ -798,6 +854,8 @@ export const translations = {
         "Sie sind nicht berechtigt, diese Service-Buchung zu entfernen.",
       notAllowedServiceUpdate:
         "Sie sind nicht berechtigt, diese Service-Buchung zu aktualisieren.",
+      notAllowedWaitlistDelete:
+        "Sie sind nicht berechtigt, diesen Wartelisten-Eintrag zu entfernen.",
       roomNotAvailable:
         "Dieses Zimmer ist fuer den gewaehlten Zeitraum nicht verfuegbar.",
       saveBookingError:
@@ -825,8 +883,30 @@ export const translations = {
         "Service-Buchung konnte wegen eines Datenbank-Fehlers nicht bestaetigt werden.",
       serviceDeleteWriteError:
         "Service-Buchung konnte wegen eines Datenbank-Fehlers nicht entfernt werden.",
+      serviceTimeSlotUnavailable:
+        "Diese Startzeit ist bereits ausgebucht. Bitte waehlen Sie eine andere.",
+      findWaitlistError:
+        "Dieser Wartelisten-Eintrag konnte gerade nicht gefunden werden. Bitte aktualisieren und erneut versuchen.",
       findServiceBookingError:
         "Diese Service-Buchung konnte gerade nicht gefunden werden. Bitte aktualisieren und erneut versuchen.",
+      waitlistAlreadyExists:
+        "Sie stehen fuer diese Daten bereits auf der Warteliste.",
+      waitlistCreated:
+        "Sie wurden auf die Warteliste gesetzt.",
+      waitlistDeleteBlockedPermissions:
+        "Das Entfernen der Warteliste wurde durch Datenbankrechte blockiert. Bitte erlauben Sie DELETE auf room_waitlist fuer den Eigentuemer.",
+      waitlistDeleteError:
+        "Der Wartelisten-Eintrag konnte wegen eines Datenbank-Fehlers nicht entfernt werden.",
+      waitlistInsertBlockedPermissions:
+        "Die Erstellung der Warteliste wurde durch Datenbankrechte blockiert. Bitte erlauben Sie INSERT auf room_waitlist fuer authentifizierte Nutzer.",
+      waitlistNotFound:
+        "Wartelisten-Eintrag existiert nicht mehr.",
+      waitlistRemoved:
+        "Wartelisten-Eintrag erfolgreich entfernt.",
+      waitlistSaveError:
+        "Ihre Wartelisten-Anfrage konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      waitlistTableMissing:
+        "Die Tabelle room_waitlist fehlt. Bitte fuehren Sie die SQL-Migration fuer die Warteliste aus.",
     },
   },
 } as const;

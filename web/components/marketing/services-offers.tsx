@@ -8,6 +8,7 @@ type ServiceCard = {
   perPersonPricing: boolean;
   positioning: string;
   serviceCode: string;
+  timeSlots: readonly string[];
   price: string;
   title: string;
   unitPriceCents: number;
@@ -90,6 +91,7 @@ export function ServicesOffers({
                 defaultDate={card.defaultDate}
                 perPersonPricing={card.perPersonPricing}
                 serviceCode={card.serviceCode}
+                timeSlots={card.timeSlots}
                 serviceTitle={card.title}
                 unitPriceCents={card.unitPriceCents}
               />

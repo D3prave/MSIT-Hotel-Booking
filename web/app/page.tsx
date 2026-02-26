@@ -1,7 +1,7 @@
 // web/app/page.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { CalendarDays } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
@@ -13,6 +13,7 @@ import { GuestFeedback } from "@/components/marketing/guest-feedback";
 import BookRoomForm from "@/components/booking/book-room-form";
 import { useLanguage } from "@/components/providers/language-provider";
 import { getRoomCategory, type RoomCategory } from "@/lib/i18n/translations";
+import { SERVICE_TIME_SLOTS } from "@/lib/booking/service-time-slots";
 
 type Room = {
   description: string | null;
@@ -21,6 +22,19 @@ type Room = {
   is_available: boolean;
   price_cents: number;
   type: string;
+};
+
+type AvailabilityRpcRow = {
+  available_rooms: number;
+  category: string;
+  day: string;
+  total_rooms: number;
+};
+
+type CategoryAvailabilityCell = {
+  available: number;
+  day: string;
+  total: number;
 };
 
 const SECTION_IDS = ["about", "experience", "rooms", "services", "feedback", "contact"] as const;
@@ -42,13 +56,49 @@ const CATEGORY_DEFAULT_PRICE_CENTS: Record<RoomCategory, number> = {
 };
 
 const SERVICE_BOOKING_CONFIG = [
-  { perPersonPricing: true, serviceCode: "stretch_think_workshop", unitPriceCents: 2900 },
-  { perPersonPricing: true, serviceCode: "infused_drink_tasting", unitPriceCents: 1800 },
-  { perPersonPricing: false, serviceCode: "conference_room_rental", unitPriceCents: 8900 },
-  { perPersonPricing: false, serviceCode: "wellness_addons", unitPriceCents: 5900 },
-  { perPersonPricing: false, serviceCode: "scenic_drive_picnic", unitPriceCents: 8900 },
-  { perPersonPricing: true, serviceCode: "local_culinary_experience", unitPriceCents: 5900 },
+  {
+    perPersonPricing: true,
+    serviceCode: "stretch_think_workshop",
+    timeSlots: SERVICE_TIME_SLOTS,
+    unitPriceCents: 2900,
+  },
+  {
+    perPersonPricing: true,
+    serviceCode: "infused_drink_tasting",
+    timeSlots: SERVICE_TIME_SLOTS,
+    unitPriceCents: 1800,
+  },
+  {
+    perPersonPricing: false,
+    serviceCode: "conference_room_rental",
+    timeSlots: SERVICE_TIME_SLOTS,
+    unitPriceCents: 8900,
+  },
+  {
+    perPersonPricing: false,
+    serviceCode: "wellness_addons",
+    timeSlots: SERVICE_TIME_SLOTS,
+    unitPriceCents: 5900,
+  },
+  {
+    perPersonPricing: false,
+    serviceCode: "scenic_drive_picnic",
+    timeSlots: SERVICE_TIME_SLOTS,
+    unitPriceCents: 8900,
+  },
+  {
+    perPersonPricing: true,
+    serviceCode: "local_culinary_experience",
+    timeSlots: SERVICE_TIME_SLOTS,
+    unitPriceCents: 5900,
+  },
 ] as const;
+
+const AVAILABILITY_DAYS = 7;
+
+function isRoomCategoryValue(value: string): value is RoomCategory {
+  return (CATEGORY_ORDER as readonly string[]).includes(value);
+}
 
 function getLocalDateInputValue(date: Date) {
   const local = new Date(date);
@@ -66,8 +116,18 @@ function getNextDay(dateStr: string) {
   return getLocalDateInputValue(d);
 }
 
+function getDateWindow(startDate: string, days: number) {
+  const dateStrings: string[] = [];
+  let cursor = startDate;
+  for (let i = 0; i < days; i += 1) {
+    dateStrings.push(cursor);
+    cursor = getNextDay(cursor);
+  }
+  return dateStrings;
+}
+
 export default function HomePage() {
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const { locale, t } = useLanguage();
 
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -75,8 +135,24 @@ export default function HomePage() {
   const [startDate, setStartDate] = useState(getTodayLocalDateInputValue);
   const [endDate, setEndDate] = useState(() => getNextDay(getTodayLocalDateInputValue()));
   const [activeSection, setActiveSection] = useState<SectionId>("about");
+  const [categoryAvailability, setCategoryAvailability] = useState<
+    Record<RoomCategory, CategoryAvailabilityCell[]>
+  >({
+    attic: [],
+    deluxe: [],
+    economy: [],
+    superior: [],
+  });
   const startInputRef = useRef<HTMLInputElement>(null);
   const endInputRef = useRef<HTMLInputElement>(null);
+  const availabilityDayFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale === "de" ? "de-DE" : "en-US", {
+        day: "2-digit",
+        month: "2-digit",
+      }),
+    [locale]
+  );
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -85,6 +161,92 @@ export default function HomePage() {
     };
     fetchRooms();
   }, [supabase]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const dateWindow = getDateWindow(today, AVAILABILITY_DAYS);
+    const roomTotalsByCategory = CATEGORY_ORDER.reduce(
+      (acc, category) => {
+        acc[category] = rooms.filter((room) => getRoomCategory(room.type) === category).length;
+        return acc;
+      },
+      {
+        attic: 0,
+        deluxe: 0,
+        economy: 0,
+        superior: 0,
+      } as Record<RoomCategory, number>
+    );
+
+    const fallbackState = CATEGORY_ORDER.reduce(
+      (acc, category) => {
+        const total = roomTotalsByCategory[category];
+        acc[category] = dateWindow.map((day) => ({ available: total, day, total }));
+        return acc;
+      },
+      {
+        attic: [] as CategoryAvailabilityCell[],
+        deluxe: [] as CategoryAvailabilityCell[],
+        economy: [] as CategoryAvailabilityCell[],
+        superior: [] as CategoryAvailabilityCell[],
+      }
+    );
+
+    const fetchCategoryAvailability = async () => {
+      const { data, error } = await supabase.rpc("get_room_category_availability", {
+        days_param: AVAILABILITY_DAYS,
+        start_date_param: today,
+      });
+
+      if (!isMounted) return;
+
+      if (error || !Array.isArray(data)) {
+        setCategoryAvailability(fallbackState);
+        return;
+      }
+
+      const rows = data as AvailabilityRpcRow[];
+      const nextState = CATEGORY_ORDER.reduce(
+        (acc, category) => {
+          const rowByDay = new Map(
+            rows
+              .filter((row) => isRoomCategoryValue(String(row.category)) && row.category === category)
+              .map((row) => [
+                String(row.day),
+                {
+                  available: Number(row.available_rooms ?? 0),
+                  day: String(row.day),
+                  total: Number(row.total_rooms ?? 0),
+                } satisfies CategoryAvailabilityCell,
+              ])
+          );
+
+          acc[category] = dateWindow.map((day) => {
+            const fromRow = rowByDay.get(day);
+            if (fromRow) return fromRow;
+            const total = roomTotalsByCategory[category];
+            return { available: total, day, total };
+          });
+          return acc;
+        },
+        {
+          attic: [] as CategoryAvailabilityCell[],
+          deluxe: [] as CategoryAvailabilityCell[],
+          economy: [] as CategoryAvailabilityCell[],
+          superior: [] as CategoryAvailabilityCell[],
+        }
+      );
+
+      setCategoryAvailability(nextState);
+    };
+
+    void fetchCategoryAvailability();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [rooms, supabase, today]);
 
   useEffect(() => {
     let rafId = 0;
@@ -289,6 +451,7 @@ export default function HomePage() {
     image: servicesImages[index] ?? "/lobby.jpeg",
     perPersonPricing: SERVICE_BOOKING_CONFIG[index]?.perPersonPricing ?? true,
     serviceCode: SERVICE_BOOKING_CONFIG[index]?.serviceCode ?? `service_${index + 1}`,
+    timeSlots: SERVICE_BOOKING_CONFIG[index]?.timeSlots ?? SERVICE_TIME_SLOTS,
     unitPriceCents: SERVICE_BOOKING_CONFIG[index]?.unitPriceCents ?? 0,
   }));
 
@@ -314,6 +477,9 @@ export default function HomePage() {
   const roomCards = CATEGORY_ORDER.map((category) => {
     const roomsInCategory = rooms.filter((room) => getRoomCategory(room.type) === category);
     const representativeRoom = roomsInCategory[0] ?? null;
+    const availabilityWindow = categoryAvailability[category] ?? [];
+    const selectedDateAvailability =
+      availabilityWindow.find((cell) => cell.day === startDate)?.available ?? null;
     const priceCents =
       roomsInCategory.length > 0
         ? Math.min(...roomsInCategory.map((room) => room.price_cents))
@@ -327,7 +493,9 @@ export default function HomePage() {
       category,
       description: localizedDescription,
       image: CATEGORY_IMAGE[category],
+      availabilityWindow,
       priceCents,
+      selectedDateSoldOut: selectedDateAvailability === 0,
       title: t.home.roomTypeByCategory[category],
     };
   });
@@ -498,12 +666,49 @@ export default function HomePage() {
                 <p className="mt-1.5 min-h-[2.2rem] text-[13px] leading-relaxed text-white/50 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden md:min-h-[2.5rem] md:text-sm">
                   {card.description}
                 </p>
+                <div className="mt-2">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">
+                    {t.home.availabilityWindowTitle}
+                  </p>
+                  <div className="mt-1 grid grid-cols-7 gap-1">
+                    {card.availabilityWindow.map((cell) => {
+                      const isSelected = cell.day === startDate;
+                      const soldOut = cell.available <= 0;
+
+                      return (
+                        <button
+                          key={`${card.category}-${cell.day}`}
+                          type="button"
+                          onClick={() => {
+                            setStartDate(cell.day);
+                            setEndDate(getNextDay(cell.day));
+                          }}
+                          className={`rounded-md border px-1 py-1 text-center transition-all ${
+                            soldOut
+                              ? "border-red-500/30 bg-red-500/10 text-red-200/80 hover:border-red-400/60"
+                              : isSelected
+                              ? "border-[#a87f5d]/70 bg-[#3d2b1f]/45 text-[#f0dac2]"
+                              : "border-white/10 bg-[#0b1220]/45 text-white/75 hover:border-[#a87f5d]/45 hover:text-white"
+                          }`}
+                        >
+                          <span className="block text-[9px] font-bold uppercase leading-tight">
+                            {availabilityDayFormatter.format(new Date(`${cell.day}T00:00:00`))}
+                          </span>
+                          <span className="block text-[9px] font-semibold leading-tight">
+                            {soldOut ? t.home.soldOutShort : `${cell.available}/${cell.total}`}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="pt-1">
                   <BookRoomForm
                     roomCategory={card.category}
                     startDate={startDate}
                     endDate={endDate}
-                    unavailable={card.availableCount === 0}
+                    unavailable={card.availableCount === 0 || card.selectedDateSoldOut}
+                    showWaitlist={card.availableCount === 0 || card.selectedDateSoldOut}
                     testId={`book-room-${card.category}`}
                   />
                 </div>
