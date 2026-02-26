@@ -10,5 +10,6 @@ Run these in Supabase SQL Editor in this order:
 6. `06_fixed_60pct_seed_ignoring_new_bookings.sql` (optional alternative: fixed 60% seed baseline independent from new bookings)
 7. `07_randomized_60pct_week_seed.sql` (optional alternative: randomized ~60% occupancy for today + next 6 days, attic kept available)
 8. `08_service_bookings.sql` (required if you want service offers to be bookable in UI + DB)
+9. `09_guest_feedback.sql` (required if you want the new feedback form to persist comments in DB)
 
 The app code expects these DB changes to be applied.

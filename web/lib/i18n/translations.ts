@@ -29,6 +29,7 @@ export const translations = {
       aboutUs: "About Us",
       contact: "Contact",
       experience: "Experience",
+      feedback: "Feedback",
       services: "Services",
       language: "Language",
       login: "Login",
@@ -219,6 +220,43 @@ export const translations = {
           title: "Full Balance Day",
         },
       ],
+      feedbackTitle: "Guest Feedback",
+      feedbackSubtitle: "Client notes from guests staying at DENKRAUM 1886.",
+      feedbackIntro:
+        "We use your private comments to continuously refine work comfort, service flow, and executive stay quality.",
+      feedbackClientVoices: "Client Voices",
+      feedbackPrev: "Previous testimonial",
+      feedbackNext: "Next testimonial",
+      feedbackFormTitle: "Leave a Comment",
+      feedbackNameLabel: "Your Name",
+      feedbackNamePlaceholder: "Enter your name",
+      feedbackCommentLabel: "Your Feedback",
+      feedbackCommentPlaceholder:
+        "Share what worked well or what we should improve for business stays.",
+      feedbackFormHint:
+        "Your comment is collected internally and is not published on the website.",
+      feedbackSubmit: "Send Feedback",
+      feedbackSubmitting: "Sending...",
+      feedbackTestimonials: [
+        {
+          author: "Sarah K.",
+          quote:
+            "The meeting-room setup was reliable and quiet, and the lounge service made our in-between sessions genuinely productive.",
+          role: "Operations Director, Mobility Scale-up",
+        },
+        {
+          author: "Thomas M.",
+          quote:
+            "I could run calls in the morning and still recover in the evening. The flow between work and downtime felt intentional.",
+          role: "C-Level Advisor, Automotive Supplier",
+        },
+        {
+          author: "Elena R.",
+          quote:
+            "Strong Wi-Fi, clear logistics, and a premium atmosphere. Exactly the kind of base I need for short executive trips.",
+          role: "Regional Sales Lead, Enterprise SaaS",
+        },
+      ],
       pricePerNight: "/ night",
       roomFallbackDescription: "Premium workspace and farmhouse charm.",
       roomTypeByCategory: {
@@ -328,8 +366,20 @@ export const translations = {
         "Could not remove booking due to a database write error.",
       findBookingError:
         "Could not find this booking right now. Please refresh and try again.",
+      feedbackInsertBlockedPermissions:
+        "Feedback submission was blocked by database permissions. Please allow INSERT on guest_feedback for anon and authenticated users.",
+      feedbackSaveError:
+        "We could not save your feedback. Please try again.",
+      feedbackSaved:
+        "Thank you. Your feedback was submitted.",
+      feedbackTableMissing:
+        "Feedback table is missing. Please run the guest_feedback SQL migration.",
       invalidBookingId: "Invalid booking id.",
       invalidDates: "Please choose valid check-in and check-out dates.",
+      invalidFeedbackName:
+        "Please enter your name between 2 and 120 characters.",
+      invalidFeedbackMessage:
+        "Please enter feedback up to 1200 characters.",
       invalidRoomSelection: "Please choose a valid room.",
       invalidServiceBookingId: "Invalid service booking id.",
       invalidServiceDate: "Please choose a valid service date.",
@@ -378,6 +428,7 @@ export const translations = {
       aboutUs: "Ueber Uns",
       contact: "Kontakt",
       experience: "Erlebnis",
+      feedback: "Feedback",
       services: "Services",
       language: "Sprache",
       login: "Anmelden",
@@ -570,6 +621,43 @@ export const translations = {
           title: "Full Balance Day",
         },
       ],
+      feedbackTitle: "Gaeste-Feedback",
+      feedbackSubtitle: "Rueckmeldungen von unseren Gaesten im DENKRAUM 1886.",
+      feedbackIntro:
+        "Wir sammeln Ihr Feedback intern, um Arbeitskomfort, Servicequalitaet und den gesamten Aufenthalt laufend zu verbessern.",
+      feedbackClientVoices: "Stimmen unserer Gaeste",
+      feedbackPrev: "Vorherige Bewertung",
+      feedbackNext: "Naechste Bewertung",
+      feedbackFormTitle: "Kommentar hinterlassen",
+      feedbackNameLabel: "Ihr Name",
+      feedbackNamePlaceholder: "Namen eingeben",
+      feedbackCommentLabel: "Ihr Feedback",
+      feedbackCommentPlaceholder:
+        "Teilen Sie mit, was gut war oder was wir fuer Business-Aufenthalte verbessern koennen.",
+      feedbackFormHint:
+        "Ihr Kommentar wird intern erfasst und nicht auf der Website veroeffentlicht.",
+      feedbackSubmit: "Feedback senden",
+      feedbackSubmitting: "Sende...",
+      feedbackTestimonials: [
+        {
+          author: "Sarah K.",
+          quote:
+            "Die Meeting-Raeume waren zuverlaessig und ruhig, und der Lounge-Service hat unsere Pausen wirklich produktiv gemacht.",
+          role: "Operations Director, Mobility Scale-up",
+        },
+        {
+          author: "Thomas M.",
+          quote:
+            "Morgens konnte ich Calls durchziehen und abends trotzdem regenerieren. Die Balance zwischen Fokus und Erholung hat perfekt gepasst.",
+          role: "C-Level Advisor, Automotive Supplier",
+        },
+        {
+          author: "Elena R.",
+          quote:
+            "Stabiles WLAN, klare Organisation und ein hochwertiges Ambiente. Genau die Basis, die ich fuer kurze Executive-Trips brauche.",
+          role: "Regional Sales Lead, Enterprise SaaS",
+        },
+      ],
       pricePerNight: "/ Nacht",
       roomFallbackDescription: "Premium-Arbeitsraum und Bauernhaus-Charme.",
       roomTypeByCategory: {
@@ -680,9 +768,21 @@ export const translations = {
         "Buchung konnte wegen eines Datenbank-Fehlers nicht entfernt werden.",
       findBookingError:
         "Diese Buchung konnte gerade nicht gefunden werden. Bitte aktualisieren und erneut versuchen.",
+      feedbackInsertBlockedPermissions:
+        "Das Senden von Feedback wurde durch Datenbankrechte blockiert. Bitte erlauben Sie INSERT auf guest_feedback fuer anon und authenticated.",
+      feedbackSaveError:
+        "Ihr Feedback konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      feedbackSaved:
+        "Danke. Ihr Feedback wurde erfolgreich uebermittelt.",
+      feedbackTableMissing:
+        "Die Tabelle guest_feedback fehlt. Bitte fuehren Sie die SQL-Migration fuer Feedback aus.",
       invalidBookingId: "Ungueltige Buchungs-ID.",
       invalidDates:
         "Bitte waehlen Sie gueltige Check-in- und Check-out-Daten.",
+      invalidFeedbackName:
+        "Bitte geben Sie einen Namen zwischen 2 und 120 Zeichen ein.",
+      invalidFeedbackMessage:
+        "Bitte geben Sie Feedback mit maximal 1200 Zeichen ein.",
       invalidRoomSelection: "Bitte waehlen Sie ein gueltiges Zimmer.",
       invalidServiceBookingId: "Ungueltige Service-Buchungs-ID.",
       invalidServiceDate:

@@ -9,6 +9,7 @@ import { Hero } from "@/components/marketing/hero";
 import { AboutUs } from "@/components/marketing/about-us";
 import { ContactUs } from "@/components/marketing/contact-us";
 import { ServicesOffers } from "@/components/marketing/services-offers";
+import { GuestFeedback } from "@/components/marketing/guest-feedback";
 import BookRoomForm from "@/components/booking/book-room-form";
 import { useLanguage } from "@/components/providers/language-provider";
 import { getRoomCategory, type RoomCategory } from "@/lib/i18n/translations";
@@ -22,7 +23,7 @@ type Room = {
   type: string;
 };
 
-const SECTION_IDS = ["about", "experience", "rooms", "services", "contact"] as const;
+const SECTION_IDS = ["about", "experience", "rooms", "services", "feedback", "contact"] as const;
 type SectionId = (typeof SECTION_IDS)[number];
 const CATEGORY_ORDER: RoomCategory[] = ["economy", "superior", "deluxe", "attic"];
 
@@ -252,6 +253,7 @@ export default function HomePage() {
     { id: "experience", label: t.navbar.experience },
     { id: "rooms", label: t.navbar.rooms },
     { id: "services", label: t.navbar.services },
+    { id: "feedback", label: t.navbar.feedback },
     { id: "contact", label: t.navbar.contact },
   ];
 
@@ -521,6 +523,8 @@ export default function HomePage() {
         bundlesSubtitle={t.home.bundlesSubtitle}
         bundles={t.home.bundles}
       />
+
+      <GuestFeedback />
 
       <div className="reveal reveal-header">
         <ContactUs
