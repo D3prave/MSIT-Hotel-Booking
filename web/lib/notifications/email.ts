@@ -2,6 +2,7 @@ import type { Locale } from "@/lib/i18n/translations";
 import nodemailer from "nodemailer";
 
 type BookingEmailEvent = "cancelled" | "confirmed" | "created";
+type ServiceBookingEmailEvent = "cancelled" | "confirmed" | "created";
 
 type SendBookingEmailInput = {
   endDate: string;
@@ -10,6 +11,16 @@ type SendBookingEmailInput = {
   roomId: string;
   startDate: string;
   toEmail: string | null | undefined;
+};
+
+type SendServiceBookingEmailInput = {
+  event: ServiceBookingEmailEvent;
+  locale: Locale;
+  participants: number;
+  serviceDate: string;
+  serviceTitle: string;
+  toEmail: string | null | undefined;
+  totalPriceCents: number;
 };
 
 function isDevEnvironment() {
@@ -34,6 +45,18 @@ function getEventLabels(locale: Locale, event: BookingEmailEvent) {
   if (event === "created") return { headline: "Booking created", subject: "DENKRAUM: Booking created" };
   if (event === "confirmed") return { headline: "Booking confirmed", subject: "DENKRAUM: Booking confirmed" };
   return { headline: "Booking cancelled", subject: "DENKRAUM: Booking cancelled" };
+}
+
+function getServiceEventLabels(locale: Locale, event: ServiceBookingEmailEvent) {
+  if (locale === "de") {
+    if (event === "created") return { headline: "Service-Buchung erstellt", subject: "DENKRAUM: Service-Buchung erstellt" };
+    if (event === "confirmed") return { headline: "Service-Buchung bestaetigt", subject: "DENKRAUM: Service-Buchung bestaetigt" };
+    return { headline: "Service-Buchung storniert", subject: "DENKRAUM: Service-Buchung storniert" };
+  }
+
+  if (event === "created") return { headline: "Service booking created", subject: "DENKRAUM: Service booking created" };
+  if (event === "confirmed") return { headline: "Service booking confirmed", subject: "DENKRAUM: Service booking confirmed" };
+  return { headline: "Service booking cancelled", subject: "DENKRAUM: Service booking cancelled" };
 }
 
 export async function sendBookingEmail(input: SendBookingEmailInput) {
@@ -140,5 +163,105 @@ export async function sendBookingEmail(input: SendBookingEmailInput) {
       console.error("[email] failed to call Resend API");
     }
     // Best-effort notification; do not block booking flow.
+  }
+}
+
+export async function sendServiceBookingEmail(input: SendServiceBookingEmailInput) {
+  const emailTestTo = process.env.EMAIL_TEST_TO?.trim();
+  const resendTestTo = process.env.RESEND_TEST_TO?.trim();
+  const to = (emailTestTo || resendTestTo || input.toEmail)?.trim();
+  if (!to) {
+    if (isDevEnvironment()) console.warn("[email] skipped: recipient is missing");
+    return;
+  }
+
+  const smtpUser = process.env.SMTP_USER?.trim();
+  const smtpPass = process.env.SMTP_PASS?.replace(/\s+/g, "").trim();
+  const smtpHost = process.env.SMTP_HOST?.trim() || "smtp.gmail.com";
+  const smtpPort = Number(process.env.SMTP_PORT?.trim() || 465);
+  const smtpSecure = parseBoolean(process.env.SMTP_SECURE, true);
+  const smtpFrom = process.env.EMAIL_FROM?.trim() || smtpUser || "";
+
+  const { headline, subject } = getServiceEventLabels(input.locale, input.event);
+  const totalPrice = (input.totalPriceCents / 100).toFixed(2);
+
+  const text =
+    `${headline}\n` +
+    `Service: ${input.serviceTitle}\n` +
+    `Date: ${input.serviceDate}\n` +
+    `Participants: ${input.participants}\n` +
+    `Total: EUR ${totalPrice}\n`;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.5;color:#0b1220">
+      <h2 style="margin:0 0 12px">${headline}</h2>
+      <p style="margin:0 0 6px"><strong>Service:</strong> ${input.serviceTitle}</p>
+      <p style="margin:0 0 6px"><strong>Date:</strong> ${input.serviceDate}</p>
+      <p style="margin:0 0 6px"><strong>Participants:</strong> ${input.participants}</p>
+      <p style="margin:0 0 6px"><strong>Total:</strong> EUR ${totalPrice}</p>
+    </div>
+  `;
+
+  if (smtpUser && smtpPass && smtpFrom) {
+    try {
+      const transporter = nodemailer.createTransport({
+        auth: {
+          pass: smtpPass,
+          user: smtpUser,
+        },
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpSecure,
+      });
+
+      await transporter.sendMail({
+        from: smtpFrom,
+        html,
+        subject,
+        text,
+        to,
+      });
+      return;
+    } catch (error) {
+      if (isDevEnvironment()) {
+        console.error("[email] smtp send failed", error);
+      }
+      return;
+    }
+  }
+
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.RESEND_FROM_EMAIL?.trim() || "onboarding@resend.dev";
+  if (!apiKey || !from) {
+    if (isDevEnvironment()) {
+      console.warn("[email] skipped: no SMTP config and missing RESEND_API_KEY/RESEND_FROM_EMAIL");
+    }
+    return;
+  }
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      body: JSON.stringify({
+        from,
+        html,
+        subject,
+        text,
+        to: [to],
+      }),
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (!response.ok && isDevEnvironment()) {
+      const details = await response.text().catch(() => "");
+      console.error(`[email] resend rejected request (${response.status})`, details);
+    }
+  } catch {
+    if (isDevEnvironment()) {
+      console.error("[email] failed to call Resend API");
+    }
   }
 }

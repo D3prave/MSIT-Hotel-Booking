@@ -29,6 +29,7 @@ export const translations = {
       aboutUs: "About Us",
       contact: "Contact",
       experience: "Experience",
+      services: "Services",
       language: "Language",
       login: "Login",
       menu: "Menu",
@@ -117,6 +118,107 @@ export const translations = {
         },
       ],
       experienceTitle: "The DENKRAUM Experience",
+      servicesTitle: "Services for Bleisure Guests",
+      servicesSubtitle:
+        "Cross-sell and up-sell offers for productivity, recovery, local culture, and premium hosting.",
+      servicesIntro:
+        "Designed for guests who blend executive focus with leisure: work blocks, wellness breaks, curated drives, and local culinary moments.",
+      servicesCards: [
+        {
+          details: [
+            "1-hour guided stretch and relaxation session.",
+            "Infused water drink included.",
+            "Optional +30 min automotive-themed cognitive quiz.",
+          ],
+          positioning:
+            "Work-life balance reset between meetings.",
+          price: "EUR 29 / person",
+          title: "Stretch & Think Workshop",
+          upsell:
+            "Upsell: Book as a meeting break or before dinner.",
+        },
+        {
+          details: [
+            "3-item tasting flight: zero-alcohol or botanical alcohol options.",
+            "Local seasonal lounge experience.",
+            "Pairs well with Stretch & Think for bundle savings.",
+          ],
+          positioning:
+            "Local infused drink tasting with lounge atmosphere.",
+          price: "EUR 18 / person",
+          title: "Infused Drink Tasting Flight",
+          upsell:
+            "Upsell: +EUR 10 with aperitif plate (cheese + nuts).",
+        },
+        {
+          details: [
+            "Two conference rooms for focused small gatherings.",
+            "Projector, flipchart, and videoconference tools included.",
+            "Coffee and water included.",
+          ],
+          positioning:
+            "Professional space for bleisure guests hosting small meetings.",
+          price: "Half day (4h): EUR 89 | Full day: EUR 149",
+          title: "Conference / Meeting Room Rental",
+          upsell: "Upsell: Light snacks for EUR 15 per guest.",
+        },
+        {
+          details: [
+            "Private Stretch & Sauna: 60 min sauna + guided stretching.",
+            "Deep Recovery Bundle: sauna + infused drinks + stretch session.",
+            "Built for regenerative balance after business days.",
+          ],
+          positioning:
+            "Recovery add-ons for reset and balance.",
+          price: "Stretch & Sauna: EUR 59 | Deep Recovery: EUR 69",
+          title: "Wellness Add-Ons",
+          upsell: "Upsell: Combine with evening dinner experience.",
+        },
+        {
+          details: [
+            "Classic-car chauffeur routes through Altmuhltal.",
+            "Half day and full day options with curated village stops.",
+            "Map, snacks, drink, and local guide tips included.",
+          ],
+          positioning:
+            "Scenic drive experience with regional picnic options.",
+          price: "Half day: EUR 89 | Full day: EUR 169",
+          title: "Scenic Drive & Picnic",
+          upsell: "Upsell: Picnic pack for EUR 39 per person.",
+        },
+        {
+          details: [
+            "Regional dinner tasting menu, ideally with Altmuhltal lamb.",
+            "Great for longer stays, VIP guests, and C-level hosting.",
+            "Business-friendly evening format.",
+          ],
+          positioning:
+            "Local culinary upgrade for premium stays.",
+          price: "Tasting menu: EUR 59 / person",
+          title: "Local Culinary Experience",
+          upsell: "Upsell: Wine pairing +EUR 29.",
+        },
+      ],
+      bundlesTitle: "Bleisure Bundles",
+      bundlesSubtitle:
+        "Pre-built combinations for guests extending business trips with leisure.",
+      bundles: [
+        {
+          contents: "Meeting room (4h), Stretch & Think, infused drinks",
+          price: "EUR 109",
+          title: "Work & Wellness Package",
+        },
+        {
+          contents: "Scenic drive, picnic pack, dinner tasting menu",
+          price: "EUR 119",
+          title: "Drive & Dine",
+        },
+        {
+          contents: "Stretch workshop, signature drink, dinner experience",
+          price: "EUR 89",
+          title: "Full Balance Day",
+        },
+      ],
       pricePerNight: "/ night",
       roomFallbackDescription: "Premium workspace and farmhouse charm.",
       roomTypeByCategory: {
@@ -131,6 +233,13 @@ export const translations = {
       checking: "Checking...",
       unavailable: "Unavailable",
     },
+    serviceForm: {
+      book: "Book Service",
+      booking: "Booking...",
+      dateLabel: "Date",
+      estimatedTotal: "Estimated total",
+      participantsLabel: "Guests",
+    },
     notifications: {
       bookingConfirmed: "Booking confirmed.",
       bookingCreated: "Booking created.",
@@ -141,8 +250,12 @@ export const translations = {
       empty: "No bookings found yet.",
       nightPlural: "nights",
       nightSingular: "night",
+      participantsLabel: "Guests",
       roomFallback: "Booked room",
+      roomBookingsSection: "Room Bookings",
       roomIdPrefix: "Room ID",
+      serviceBookingsSection: "Service Bookings",
+      servicesEmpty: "No service bookings yet.",
       status: {
         cancelled: "cancelled",
         confirmed: "confirmed",
@@ -218,12 +331,45 @@ export const translations = {
       invalidBookingId: "Invalid booking id.",
       invalidDates: "Please choose valid check-in and check-out dates.",
       invalidRoomSelection: "Please choose a valid room.",
+      invalidServiceBookingId: "Invalid service booking id.",
+      invalidServiceDate: "Please choose a valid service date.",
+      invalidServiceParticipants: "Please choose a valid number of guests.",
+      invalidServiceSelection: "Please choose a valid service.",
       notAllowedDelete: "You are not allowed to remove this booking.",
       notAllowedUpdate: "You are not allowed to update this booking.",
+      notAllowedServiceDelete:
+        "You are not allowed to remove this service booking.",
+      notAllowedServiceUpdate:
+        "You are not allowed to update this service booking.",
       roomNotAvailable:
         "This room is not available for the selected dates.",
       saveBookingError:
         "We could not complete your booking. Please try again.",
+      serviceBookingAlreadyConfirmed:
+        "Service booking is already confirmed.",
+      serviceBookingConfirmed:
+        "Service booking confirmed successfully.",
+      serviceBookingCreated:
+        "Service booking created successfully.",
+      serviceBookingDeleteBlockedPermissions:
+        "Service booking removal was blocked by database permissions. Please allow DELETE on service_bookings for the owner.",
+      serviceBookingInsertBlockedPermissions:
+        "Service booking creation was blocked by database permissions. Please allow INSERT on service_bookings for authenticated users.",
+      serviceBookingNotFound: "Service booking no longer exists.",
+      serviceBookingRemoved:
+        "Service booking removed successfully.",
+      serviceBookingSaveError:
+        "We could not complete your service booking. Please try again.",
+      serviceBookingUpdateBlockedPermissions:
+        "Service booking update was blocked by database permissions. Please allow UPDATE on service_bookings for the owner.",
+      serviceBookingsTableMissing:
+        "Service bookings table is missing. Please run the service_bookings SQL migration.",
+      serviceConfirmWriteError:
+        "Could not confirm service booking due to a database write error.",
+      serviceDeleteWriteError:
+        "Could not remove service booking due to a database write error.",
+      findServiceBookingError:
+        "Could not find this service booking right now. Please refresh and try again.",
     },
   },
   de: {
@@ -232,6 +378,7 @@ export const translations = {
       aboutUs: "Ueber Uns",
       contact: "Kontakt",
       experience: "Erlebnis",
+      services: "Services",
       language: "Sprache",
       login: "Anmelden",
       menu: "Menue",
@@ -322,6 +469,107 @@ export const translations = {
         },
       ],
       experienceTitle: "Das DENKRAUM Erlebnis",
+      servicesTitle: "Services fuer Bleisure Gaeste",
+      servicesSubtitle:
+        "Cross-Sell und Up-Sell Leistungen fuer Produktivitaet, Regeneration und regionale Erlebnisse.",
+      servicesIntro:
+        "Fuer Gaeste, die Business und Freizeit verbinden: fokussierte Arbeitszeit, Wellness-Pausen, kuratierte Fahrten und kulinarische Highlights.",
+      servicesCards: [
+        {
+          details: [
+            "1-stuendige gefuehrte Stretch- und Relax-Session.",
+            "Infused Water Drink inklusive.",
+            "Optional: +30 Min Automotive Cognitive Quiz.",
+          ],
+          positioning:
+            "Work-Life-Balance Pause zwischen Meetings.",
+          price: "EUR 29 / Person",
+          title: "Stretch & Think Workshop",
+          upsell:
+            "Upsell: Als Pause zwischen Meetings oder vor dem Dinner buchen.",
+        },
+        {
+          details: [
+            "3er Tasting Flight: zero-alcohol oder botanical alcohol.",
+            "Saisonales Lounge-Erlebnis mit regionalem Fokus.",
+            "Ideal in Kombination mit Stretch & Think fuer Bundle-Ersparnis.",
+          ],
+          positioning:
+            "Infused Drink Tasting als lokales Signature-Erlebnis.",
+          price: "EUR 18 / Person",
+          title: "Infused Drink Tasting Flight",
+          upsell:
+            "Upsell: +EUR 10 fuer Aperitif-Plate (Kaese + Nuesse).",
+        },
+        {
+          details: [
+            "Zwei Konferenzraeume fuer kleine professionelle Runden.",
+            "Projektor, Flipchart und Videokonferenz-Tools inklusive.",
+            "Kaffee und Wasser inklusive.",
+          ],
+          positioning:
+            "Meeting-Space fuer Bleisure Professionals.",
+          price: "Halber Tag (4h): EUR 89 | Ganzer Tag: EUR 149",
+          title: "Conference / Meeting Room Rental",
+          upsell: "Upsell: Light Snacks fuer EUR 15 pro Gast.",
+        },
+        {
+          details: [
+            "Private Stretch & Sauna: 60 Min Sauna + Guided Stretching.",
+            "Deep Recovery Bundle: Sauna + Infused Drinks + Stretch Session.",
+            "Perfekt fuer Regeneration nach intensiven Arbeitstagen.",
+          ],
+          positioning:
+            "Recovery und Balance Add-ons.",
+          price: "Stretch & Sauna: EUR 59 | Deep Recovery: EUR 69",
+          title: "Wellness Add-Ons",
+          upsell: "Upsell: Mit Dinner Experience kombinieren.",
+        },
+        {
+          details: [
+            "Classic-Car Chauffeur Touren im Altmuehltal.",
+            "Halbtag und Ganztag mit kuratierten Stops in historischen Orten.",
+            "Karte, Snacks, Drink und Local Guide Tipps inklusive.",
+          ],
+          positioning:
+            "Scenic Drive Experience mit optionalem Picnic.",
+          price: "Halber Tag: EUR 89 | Ganzer Tag: EUR 169",
+          title: "Scenic Drive & Picnic",
+          upsell: "Upsell: Picnic Pack fuer EUR 39 pro Person.",
+        },
+        {
+          details: [
+            "Regionales Dinner Tasting Menu, moeglichst mit Altmuehltal Lamm.",
+            "Ideal fuer laengere Aufenthalte, VIP- und C-Level-Gaeste.",
+            "Business-freundliches Abendformat.",
+          ],
+          positioning:
+            "Kulinarisches Upgrade fuer Premium-Aufenthalte.",
+          price: "Tasting Menu: EUR 59 / Person",
+          title: "Local Culinary Experience",
+          upsell: "Upsell: Wine Pairing +EUR 29.",
+        },
+      ],
+      bundlesTitle: "Bleisure Bundles",
+      bundlesSubtitle:
+        "Vorkonfigurierte Kombinationen fuer Business-Gaeste mit Leisure-Verlaengerung.",
+      bundles: [
+        {
+          contents: "Meeting room (4h), Stretch & Think, infused drinks",
+          price: "EUR 109",
+          title: "Work & Wellness Package",
+        },
+        {
+          contents: "Scenic drive, picnic pack, dinner tasting menu",
+          price: "EUR 119",
+          title: "Drive & Dine",
+        },
+        {
+          contents: "Stretch workshop, signature drink, dinner experience",
+          price: "EUR 89",
+          title: "Full Balance Day",
+        },
+      ],
       pricePerNight: "/ Nacht",
       roomFallbackDescription: "Premium-Arbeitsraum und Bauernhaus-Charme.",
       roomTypeByCategory: {
@@ -336,6 +584,13 @@ export const translations = {
       checking: "Pruefe...",
       unavailable: "Nicht verfuegbar",
     },
+    serviceForm: {
+      book: "Service buchen",
+      booking: "Buche...",
+      dateLabel: "Datum",
+      estimatedTotal: "Geschaetzter Gesamtpreis",
+      participantsLabel: "Gaeste",
+    },
     notifications: {
       bookingConfirmed: "Buchung bestaetigt.",
       bookingCreated: "Buchung erstellt.",
@@ -346,8 +601,12 @@ export const translations = {
       empty: "Noch keine Buchungen gefunden.",
       nightPlural: "Naechte",
       nightSingular: "Nacht",
+      participantsLabel: "Gaeste",
       roomFallback: "Gebuchtes Zimmer",
+      roomBookingsSection: "Zimmerbuchungen",
       roomIdPrefix: "Zimmer-ID",
+      serviceBookingsSection: "Service-Buchungen",
+      servicesEmpty: "Noch keine Service-Buchungen vorhanden.",
       status: {
         cancelled: "storniert",
         confirmed: "bestaetigt",
@@ -425,14 +684,49 @@ export const translations = {
       invalidDates:
         "Bitte waehlen Sie gueltige Check-in- und Check-out-Daten.",
       invalidRoomSelection: "Bitte waehlen Sie ein gueltiges Zimmer.",
+      invalidServiceBookingId: "Ungueltige Service-Buchungs-ID.",
+      invalidServiceDate:
+        "Bitte waehlen Sie ein gueltiges Service-Datum.",
+      invalidServiceParticipants:
+        "Bitte waehlen Sie eine gueltige Anzahl an Gaesten.",
+      invalidServiceSelection: "Bitte waehlen Sie einen gueltigen Service.",
       notAllowedDelete:
         "Sie sind nicht berechtigt, diese Buchung zu entfernen.",
       notAllowedUpdate:
         "Sie sind nicht berechtigt, diese Buchung zu aktualisieren.",
+      notAllowedServiceDelete:
+        "Sie sind nicht berechtigt, diese Service-Buchung zu entfernen.",
+      notAllowedServiceUpdate:
+        "Sie sind nicht berechtigt, diese Service-Buchung zu aktualisieren.",
       roomNotAvailable:
         "Dieses Zimmer ist fuer den gewaehlten Zeitraum nicht verfuegbar.",
       saveBookingError:
         "Die Buchung konnte nicht abgeschlossen werden. Bitte erneut versuchen.",
+      serviceBookingAlreadyConfirmed:
+        "Service-Buchung ist bereits bestaetigt.",
+      serviceBookingConfirmed:
+        "Service-Buchung erfolgreich bestaetigt.",
+      serviceBookingCreated:
+        "Service-Buchung erfolgreich erstellt.",
+      serviceBookingDeleteBlockedPermissions:
+        "Das Entfernen der Service-Buchung wurde durch Datenbankrechte blockiert. Bitte erlauben Sie DELETE auf service_bookings fuer den Eigentuemer.",
+      serviceBookingInsertBlockedPermissions:
+        "Die Erstellung der Service-Buchung wurde durch Datenbankrechte blockiert. Bitte erlauben Sie INSERT auf service_bookings fuer authentifizierte Nutzer.",
+      serviceBookingNotFound: "Service-Buchung existiert nicht mehr.",
+      serviceBookingRemoved:
+        "Service-Buchung erfolgreich entfernt.",
+      serviceBookingSaveError:
+        "Die Service-Buchung konnte nicht abgeschlossen werden. Bitte erneut versuchen.",
+      serviceBookingUpdateBlockedPermissions:
+        "Die Aktualisierung der Service-Buchung wurde durch Datenbankrechte blockiert. Bitte erlauben Sie UPDATE auf service_bookings fuer den Eigentuemer.",
+      serviceBookingsTableMissing:
+        "Die Tabelle service_bookings fehlt. Bitte fuehren Sie die SQL-Migration fuer Service-Buchungen aus.",
+      serviceConfirmWriteError:
+        "Service-Buchung konnte wegen eines Datenbank-Fehlers nicht bestaetigt werden.",
+      serviceDeleteWriteError:
+        "Service-Buchung konnte wegen eines Datenbank-Fehlers nicht entfernt werden.",
+      findServiceBookingError:
+        "Diese Service-Buchung konnte gerade nicht gefunden werden. Bitte aktualisieren und erneut versuchen.",
     },
   },
 } as const;

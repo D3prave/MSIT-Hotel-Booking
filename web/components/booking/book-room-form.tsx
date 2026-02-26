@@ -49,7 +49,7 @@ export default function BookRoomForm({
   }, [addToast, router, state.success]);
 
   return (
-    <form action={formAction} className="space-y-1.5">
+    <form action={formAction} className="space-y-0">
       {roomId ? <input type="hidden" name="roomId" value={roomId} /> : null}
       {roomCategory ? <input type="hidden" name="roomCategory" value={roomCategory} /> : null}
       <input type="hidden" name="startDate" value={startDate} />
@@ -59,19 +59,16 @@ export default function BookRoomForm({
         type="submit"
         disabled={isPending || unavailable}
         data-testid={testId ?? "book-room-button"}
-        className="w-full rounded-xl bg-[#3d2b1f] py-3.5 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-xl bg-[#3d2b1f] py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {unavailable ? t.roomForm.unavailable : isPending ? t.roomForm.checking : t.roomForm.bookRoom}
       </button>
 
-      <p
-        aria-live="polite"
-        className={`min-h-4 text-[11px] font-semibold ${
-          state.error ? "text-red-400" : "text-transparent"
-        }`}
-      >
-        {state.error ?? " "}
-      </p>
+      {state.error ? (
+        <p aria-live="polite" className="mt-1 text-[11px] font-semibold text-red-400">
+          {state.error}
+        </p>
+      ) : null}
     </form>
   );
 }

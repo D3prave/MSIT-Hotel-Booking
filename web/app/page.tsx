@@ -8,6 +8,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { Hero } from "@/components/marketing/hero";
 import { AboutUs } from "@/components/marketing/about-us";
 import { ContactUs } from "@/components/marketing/contact-us";
+import { ServicesOffers } from "@/components/marketing/services-offers";
 import BookRoomForm from "@/components/booking/book-room-form";
 import { useLanguage } from "@/components/providers/language-provider";
 import { getRoomCategory, type RoomCategory } from "@/lib/i18n/translations";
@@ -21,7 +22,7 @@ type Room = {
   type: string;
 };
 
-const SECTION_IDS = ["about", "experience", "rooms", "contact"] as const;
+const SECTION_IDS = ["about", "experience", "rooms", "services", "contact"] as const;
 type SectionId = (typeof SECTION_IDS)[number];
 const CATEGORY_ORDER: RoomCategory[] = ["economy", "superior", "deluxe", "attic"];
 
@@ -38,6 +39,15 @@ const CATEGORY_DEFAULT_PRICE_CENTS: Record<RoomCategory, number> = {
   economy: 18000,
   superior: 19500,
 };
+
+const SERVICE_BOOKING_CONFIG = [
+  { perPersonPricing: true, serviceCode: "stretch_think_workshop", unitPriceCents: 2900 },
+  { perPersonPricing: true, serviceCode: "infused_drink_tasting", unitPriceCents: 1800 },
+  { perPersonPricing: false, serviceCode: "conference_room_rental", unitPriceCents: 8900 },
+  { perPersonPricing: false, serviceCode: "wellness_addons", unitPriceCents: 5900 },
+  { perPersonPricing: false, serviceCode: "scenic_drive_picnic", unitPriceCents: 8900 },
+  { perPersonPricing: true, serviceCode: "local_culinary_experience", unitPriceCents: 5900 },
+] as const;
 
 function getLocalDateInputValue(date: Date) {
   const local = new Date(date);
@@ -241,6 +251,7 @@ export default function HomePage() {
     { id: "about", label: t.navbar.aboutUs },
     { id: "experience", label: t.navbar.experience },
     { id: "rooms", label: t.navbar.rooms },
+    { id: "services", label: t.navbar.services },
     { id: "contact", label: t.navbar.contact },
   ];
 
@@ -261,6 +272,22 @@ export default function HomePage() {
   const experienceGrid = t.home.experienceCards.map((card, index) => ({
     ...card,
     img: experienceImages[index] ?? "/lobby.jpeg",
+  }));
+  const servicesImages = [
+    "/yoga.jpeg",
+    "/drinks.png",
+    "/conference.jpeg",
+    "/spa.jpeg",
+    "/drive.png",
+    "/local_food.png",
+  ];
+  const servicesCards = t.home.servicesCards.map((card, index) => ({
+    ...card,
+    defaultDate: today,
+    image: servicesImages[index] ?? "/lobby.jpeg",
+    perPersonPricing: SERVICE_BOOKING_CONFIG[index]?.perPersonPricing ?? true,
+    serviceCode: SERVICE_BOOKING_CONFIG[index]?.serviceCode ?? `service_${index + 1}`,
+    unitPriceCents: SERVICE_BOOKING_CONFIG[index]?.unitPriceCents ?? 0,
   }));
 
   const getLocalizedRoomDescription = (room: Room) => {
@@ -439,7 +466,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
           {roomCards.map((card, index) => {
             return (
             <div
@@ -449,7 +476,7 @@ export default function HomePage() {
               className="reveal reveal-card group h-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-[#3d2b1f]/50"
               style={{ transitionDelay: `${index * 110}ms` }}
             >
-              <div className="relative aspect-[16/9]">
+              <div className="relative aspect-[16/7.4]">
                 <Image
                   src={card.image}
                   alt={card.title}
@@ -458,18 +485,18 @@ export default function HomePage() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover opacity-80 transition-opacity group-hover:opacity-100"
                 />
-                <div className="absolute bottom-3 left-3 rounded-lg border border-white/10 bg-[#0b1220]/80 px-3 py-1 backdrop-blur-md">
-                  <p className="font-bold text-[#0ea5e9]">€{(card.priceCents / 100).toFixed(2)} {t.home.pricePerNight}</p>
+                <div className="absolute bottom-2 left-2 rounded-lg border border-white/10 bg-[#0b1220]/80 px-2 py-0.5 backdrop-blur-md">
+                  <p className="text-sm font-bold text-[#0ea5e9]">€{(card.priceCents / 100).toFixed(2)} {t.home.pricePerNight}</p>
                 </div>
               </div>
-              <div className="p-4 text-left md:p-5">
-                <h3 className="min-h-[2.6rem] text-xl leading-tight font-bold text-white [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden md:min-h-[3rem] md:text-2xl">
+              <div className="p-3 text-left md:p-3.5">
+                <h3 className="min-h-[2.05rem] text-[1.18rem] leading-tight font-bold text-white [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden md:min-h-[2.4rem] md:text-[1.45rem]">
                   {card.title}
                 </h3>
-                <p className="mt-2 min-h-[3.2rem] text-[13px] leading-relaxed text-white/50 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden md:min-h-[3.6rem] md:text-sm">
+                <p className="mt-1.5 min-h-[2.2rem] text-[13px] leading-relaxed text-white/50 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden md:min-h-[2.5rem] md:text-sm">
                   {card.description}
                 </p>
-                <div className="pt-0 md:pt-0">
+                <div className="pt-1">
                   <BookRoomForm
                     roomCategory={card.category}
                     startDate={startDate}
@@ -484,6 +511,16 @@ export default function HomePage() {
           })}
         </div>
       </section>
+
+      <ServicesOffers
+        title={t.home.servicesTitle}
+        subtitle={t.home.servicesSubtitle}
+        intro={t.home.servicesIntro}
+        cards={servicesCards}
+        bundlesTitle={t.home.bundlesTitle}
+        bundlesSubtitle={t.home.bundlesSubtitle}
+        bundles={t.home.bundles}
+      />
 
       <div className="reveal reveal-header">
         <ContactUs

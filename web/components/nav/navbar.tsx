@@ -74,6 +74,7 @@ export default function Navbar({ adminEmailsRaw = "" }: NavbarProps) {
           <Link href="/#about" className="transition-colors hover:text-white">{t.navbar.aboutUs}</Link>
           <Link href="/#experience" className="transition-colors hover:text-white">{t.navbar.experience}</Link>
           <Link href="/#rooms" className="transition-colors hover:text-white">{t.navbar.rooms}</Link>
+          <Link href="/#services" className="transition-colors hover:text-white">{t.navbar.services}</Link>
           <Link href="/#contact" className="transition-colors hover:text-white">{t.navbar.contact}</Link>
 
           {authReady ? (
@@ -104,6 +105,7 @@ export default function Navbar({ adminEmailsRaw = "" }: NavbarProps) {
               <Link href="/#about" className="rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white">{t.navbar.aboutUs}</Link>
               <Link href="/#experience" className="rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white">{t.navbar.experience}</Link>
               <Link href="/#rooms" className="rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white">{t.navbar.rooms}</Link>
+              <Link href="/#services" className="rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white">{t.navbar.services}</Link>
               <Link href="/#contact" className="rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white">{t.navbar.contact}</Link>
 
               {authReady ? (
