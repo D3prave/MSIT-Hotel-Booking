@@ -7,6 +7,7 @@ import LanguageProvider from "@/components/providers/language-provider";
 import ToastProvider from "@/components/providers/toast-provider";
 import { getServerLocale } from "@/lib/i18n/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "DENKRAUM 1886",
@@ -38,6 +39,7 @@ export default async function RootLayout({
           </ToastProvider>
         </LanguageProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
