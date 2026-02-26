@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, MessageSquareQuote } from "lucide-react";
 import {
   createFeedback,
@@ -18,8 +18,6 @@ export function GuestFeedback() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
-  const lastErrorRef = useRef<string | null>(null);
-  const lastSuccessRef = useRef<string | null>(null);
 
   const testimonials = t.home.feedbackTestimonials;
   const maxIndex = Math.max(testimonials.length - 1, 0);
@@ -31,20 +29,18 @@ export function GuestFeedback() {
   }, [activeIndex, maxIndex]);
 
   useEffect(() => {
-    if (state.error && state.error !== lastErrorRef.current) {
-      lastErrorRef.current = state.error;
+    if (state.error) {
       addToast(state.error, "error");
     }
-  }, [addToast, state.error]);
+  }, [addToast, state]);
 
   useEffect(() => {
-    if (state.success && state.success !== lastSuccessRef.current) {
-      lastSuccessRef.current = state.success;
+    if (state.success) {
       addToast(state.success, "success");
       setName("");
       setComment("");
     }
-  }, [addToast, state.success]);
+  }, [addToast, state]);
 
   const goPrevious = () => {
     if (testimonials.length <= 1) return;
