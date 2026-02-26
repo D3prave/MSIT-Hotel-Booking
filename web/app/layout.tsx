@@ -11,6 +11,11 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata: Metadata = {
   title: "DENKRAUM 1886",
   description: "Executive Retreat in Kipfenberg",
+  icons: {
+    icon: "/favicon.ico?v=2",
+    shortcut: "/favicon.ico?v=2",
+    apple: "/logo.png?v=2",
+  },
 };
 
 export default async function RootLayout({
