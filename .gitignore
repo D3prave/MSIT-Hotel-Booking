@@ -1,3 +1,16 @@
-.vercel
-.env*.local
-*.sql
+# Local env files
+.env
+.env.*
+!.env.example
+!.env*.example
+
+# Vercel local project linkage
+.vercel/
+
+# Supabase local state (machine-specific, never commit)
+supabase/.temp/
+supabase/.branches/
+
+# OS junk
+.DS_Store
+**/.DS_Store

@@ -14,4 +14,7 @@ Run these in Supabase SQL Editor in this order:
 10. `10_conversion_waitlist_and_service_slots.sql` (required for room-type availability calendar, service time slots, and waitlist)
 11. `11_reseed_70pct_until_year_end_preserve_real.sql` (optional: fills occupancy baseline to ~70% until Dec 31 without deleting/cancelling real bookings)
 
+Note: scripts that reference admin access use `admin@example.com` as a placeholder.
+Replace it with your real admin email before executing in production.
+
 The app code expects these DB changes to be applied.
