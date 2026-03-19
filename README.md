@@ -6,6 +6,8 @@ This project was developed as part of **Management Simulation in Tourism 2026**.
 
 Built with Next.js + Supabase, with bilingual UI (EN/DE), room and service reservations, waitlist flow, feedback capture, and admin occupancy analytics.
 
+Live website: [denkraum1886.vercel.app](https://denkraum1886.vercel.app)
+
 ## What This Project Includes
 
 - Marketing website with sections:
