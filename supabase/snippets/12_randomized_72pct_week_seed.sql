@@ -3,9 +3,10 @@
 --
 -- Purpose:
 -- - Rebuild the admin dashboard's 7-day occupancy window with non-flat demo data.
--- - Keeps average occupancy around 72% across active rooms.
--- - Uses random room selection plus 1-3 night stays, so category totals vary by day.
+-- - Keeps exact average occupancy at 72.0% across active rooms for the 7-day window.
+-- - Uses random room selection and varying daily targets, so category totals vary by day.
 -- - Keeps the attic suite unseeded for a cleaner premium-availability story.
+-- - Forces one category to hit 100% occupancy on a single day for visual contrast.
 --
 -- IMPORTANT:
 -- - This is a demo reseed for the next 7 days (today + next 6).
@@ -23,9 +24,16 @@ declare
   horizon_end date := current_date + 7; -- exclusive
   preferred_admin_email text := 'admin@example.com';
   seed_user uuid;
+  force_full_day date := current_date + 3;
+  force_full_category text := 'deluxe';
 
   total_active_rooms integer;
   non_attic_active_rooms integer;
+  total_target_room_nights integer;
+  force_full_category_size integer;
+  min_daily_target integer := 15;
+  max_daily_target integer;
+  target_sum integer;
 
   d date;
   dow integer;
@@ -68,6 +76,24 @@ begin
     raise exception 'No active inventory found. Ensure rooms are available before seeding.';
   end if;
 
+  max_daily_target := non_attic_active_rooms;
+  total_target_room_nights := round((total_active_rooms * 7 * 0.72)::numeric)::int;
+
+  select count(*)
+  into force_full_category_size
+  from public.rooms r
+  where r.is_available = true
+    and (
+      (force_full_category = 'economy' and lower(r.type) like '%economy%')
+      or (force_full_category = 'superior' and lower(r.type) like '%superior%')
+      or (force_full_category = 'deluxe' and lower(r.type) like '%deluxe%')
+      or (force_full_category = 'attic' and lower(r.type) like '%attic%')
+    );
+
+  if force_full_category_size = 0 then
+    raise exception 'Forced full category % has no active rooms.', force_full_category;
+  end if;
+
   delete from public.bookings
   where is_seed = true
     and daterange(start_date, end_date, '[)') &&
@@ -84,22 +110,110 @@ begin
 
   base_target := round((total_active_rooms * 0.72)::numeric)::int;
 
+  create temporary table if not exists seed_targets (
+    day date primary key,
+    target integer not null
+  ) on commit drop;
+
+  truncate seed_targets;
+
+  insert into seed_targets (day, target)
+  select
+    gs::date as day,
+    greatest(
+      min_daily_target,
+      least(
+        max_daily_target,
+        base_target
+        + case
+            when extract(dow from gs)::int between 1 and 4 then 1
+            when extract(dow from gs)::int = 5 then 0
+            when extract(dow from gs)::int = 6 then -1
+            else -2
+          end
+        + floor(random() * 5)::int - 2
+      )
+    ) as target
+  from generate_series(horizon_start::timestamp, (horizon_end - 1)::timestamp, interval '1 day') gs;
+
+  update seed_targets st
+  set target = greatest(st.target, force_full_category_size)
+  where st.day = force_full_day;
+
+  select coalesce(sum(st.target), 0)
+  into target_sum
+  from seed_targets st;
+
+  while target_sum < total_target_room_nights loop
+    update seed_targets st_outer
+    set target = st_outer.target + 1
+    where st_outer.day = (
+      select st.day
+      from seed_targets st
+      where st.target < max_daily_target
+      order by random()
+      limit 1
+    );
+
+    select coalesce(sum(st.target), 0)
+    into target_sum
+    from seed_targets st;
+  end loop;
+
+  while target_sum > total_target_room_nights loop
+    update seed_targets st_outer
+    set target = st_outer.target - 1
+    where st_outer.day = (
+      select st.day
+      from seed_targets st
+      where st.target > greatest(min_daily_target, case when st.day = force_full_day then force_full_category_size else 0 end)
+      order by random()
+      limit 1
+    );
+
+    select coalesce(sum(st.target), 0)
+    into target_sum
+    from seed_targets st;
+  end loop;
+
   for d in
-    select gs::date
-    from generate_series(horizon_start::timestamp, (horizon_end - 1)::timestamp, interval '1 day') gs
+    select st.day
+    from seed_targets st
+    order by st.day
   loop
     dow := extract(dow from d)::int;
 
-    target := base_target
-      + case
-          when dow between 1 and 4 then 1  -- Mon-Thu slightly stronger
-          when dow = 5 then 0              -- Fri neutral
-          when dow = 6 then -1             -- Sat lighter
-          else -2                          -- Sun lightest
-        end
-      + floor(random() * 3)::int - 1;     -- extra day-to-day variation (-1, 0, +1)
+    select st.target
+    into target
+    from seed_targets st
+    where st.day = d;
 
-    target := greatest(16, least(non_attic_active_rooms, target));
+    if d = force_full_day then
+      insert into public.bookings (user_id, room_id, start_date, end_date, status, is_seed)
+      select
+        seed_user,
+        r.id,
+        d,
+        d + 1,
+        'confirmed',
+        true
+      from public.rooms r
+      where r.is_available = true
+        and (
+          (force_full_category = 'economy' and lower(r.type) like '%economy%')
+          or (force_full_category = 'superior' and lower(r.type) like '%superior%')
+          or (force_full_category = 'deluxe' and lower(r.type) like '%deluxe%')
+          or (force_full_category = 'attic' and lower(r.type) like '%attic%')
+        )
+        and not exists (
+          select 1
+          from public.bookings b
+          where b.room_id = r.id
+            and b.status in ('pending', 'confirmed')
+            and daterange(b.start_date, b.end_date, '[)') &&
+                daterange(d, d + 1, '[)')
+        );
+    end if;
 
     select count(distinct b.room_id)
     into current_occupied
@@ -120,17 +234,13 @@ begin
         seed_user,
         c.room_id,
         d,
-        c.booking_end,
+        d + 1,
         'confirmed',
         true
       from (
         select
-          r.id as room_id,
-          stay.booking_end
+          r.id as room_id
         from public.rooms r
-        cross join lateral (
-          select least(horizon_end, d + (1 + floor(random() * 3)::int))::date as booking_end
-        ) stay
         where r.is_available = true
           and lower(r.type) not like '%attic%'
           and not exists (
@@ -139,7 +249,7 @@ begin
             where b.room_id = r.id
               and b.status in ('pending', 'confirmed')
               and daterange(b.start_date, b.end_date, '[)') &&
-                  daterange(d, stay.booking_end, '[)')
+                  daterange(d, d + 1, '[)')
           )
         order by random()
         limit rooms_needed
